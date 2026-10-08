@@ -13,10 +13,9 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  # ─── UI / Icons ─────────────────────────────────────────────────
   cupertino_icons: ^1.0.8
 
-  # ─── Device & System ────────────────────────────────────────────
+  # Device & System
   android_intent_plus: ^5.3.0
   battery_plus: ^6.2.1
   connectivity_plus: ^6.1.0
@@ -25,71 +24,48 @@ dependencies:
   permission_handler: ^11.3.1
   package_info_plus: ^8.1.2
 
-  # ─── Contacts & Security ────────────────────────────────────────
+  # Contacts & Security
   flutter_contacts: ^1.1.9+2
   local_auth: ^2.2.0
 
-  # ─── Storage ────────────────────────────────────────────────────
+  # Storage
   shared_preferences: ^2.3.3
   flutter_secure_storage: ^9.2.4
   path_provider: ^2.1.5
 
-  # ─── Media ──────────────────────────────────────────────────────
+  # Media
   audioplayers: ^6.1.0
   image_picker: ^1.1.2
 
-  # ─── Files ──────────────────────────────────────────────────────
+  # Files
   file_picker: ^8.1.7
   open_filex: ^4.6.0
 
-  # ─── Documents & PDF ────────────────────────────────────────────
+  # PDF
   pdf: ^3.11.1
   printing: ^5.13.4
   syncfusion_flutter_pdfviewer: ^28.2.12
 
-  # ─── OCR ────────────────────────────────────────────────────────
+  # OCR
   google_mlkit_text_recognition: ^0.14.0
 
-  # ─── Notifications ──────────────────────────────────────────────
+  # Notifications
   flutter_local_notifications: ^18.0.1
   timezone: ^0.10.0
 
-  # ─── Networking ─────────────────────────────────────────────────
+  # Networking
   http: ^1.2.2
   url_launcher: ^6.3.1
 
-  # ─── Share ──────────────────────────────────────────────────────
   share_plus: ^10.1.2
 
-  # ─── Widgets ────────────────────────────────────────────────────
-  home_widget: ^0.7.0
-
-  # ─── Ads ────────────────────────────────────────────────────────
+  # Ads
   google_mobile_ads: ^5.3.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
-  flutter_launcher_icons: ^0.14.2
 
 flutter:
   uses-material-design: true
-
-  # ─── Assets ─────────────────────────────────────────────────────
-  # ملاحظة: لو مش عندك ملفات صوت، سطر assets/sounds/ ممكن يسبب خطأ في البناء
-  # فسيبته معلق. لما ترفع ملف alarm.mp3 جوه assets/sounds/، فك التعليق عن السطر
-  assets:
-    - assets/images/
-    # - assets/sounds/
-
-# ─── Launcher Icons ───────────────────────────────────────────────
-# بعد ما ترفع صورة assets/images/app_icon.png، شغل الأمر:
-#   dart run flutter_launcher_icons
-flutter_launcher_icons:
-  android: "ic_launcher"
-  ios: true
-  image_path: "assets/images/app_icon.png"
-  adaptive_icon_background: "#5B8DEF"
-  adaptive_icon_foreground: "assets/images/app_icon.png"
-  remove_alpha_ios: true
