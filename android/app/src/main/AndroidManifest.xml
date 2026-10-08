@@ -62,11 +62,9 @@
 
     <!-- ═══════════════════ Queries (فتح تطبيقات خارجية) ═══════════════════ -->
     <queries>
-        <!-- واتساب -->
         <package android:name="com.whatsapp"/>
         <package android:name="com.whatsapp.w4b"/>
 
-        <!-- روابط الإنترنت -->
         <intent>
             <action android:name="android.intent.action.VIEW"/>
             <data android:scheme="https"/>
@@ -76,7 +74,6 @@
             <data android:scheme="http"/>
         </intent>
 
-        <!-- الاتصال -->
         <intent>
             <action android:name="android.intent.action.VIEW"/>
             <data android:scheme="tel"/>
@@ -86,7 +83,6 @@
             <data android:scheme="tel"/>
         </intent>
 
-        <!-- البريد -->
         <intent>
             <action android:name="android.intent.action.SENDTO"/>
             <data android:scheme="mailto"/>
@@ -96,19 +92,16 @@
             <data android:scheme="mailto"/>
         </intent>
 
-        <!-- المتجر -->
         <intent>
             <action android:name="android.intent.action.VIEW"/>
             <data android:scheme="market"/>
         </intent>
 
-        <!-- الخرائط -->
         <intent>
             <action android:name="android.intent.action.VIEW"/>
             <data android:scheme="geo"/>
         </intent>
 
-        <!-- فتح أي ملف -->
         <intent>
             <action android:name="android.intent.action.VIEW"/>
             <data android:mimeType="*/*"/>
@@ -127,7 +120,6 @@
             <action android:name="android.media.action.IMAGE_CAPTURE"/>
         </intent>
 
-        <!-- الطباعة -->
         <intent>
             <action android:name="android.intent.action.VIEW"/>
             <data android:scheme="print"/>
@@ -137,7 +129,7 @@
     <application
         android:label="رفيقي"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_launcher"
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:enableOnBackInvokedCallback="true"
@@ -147,13 +139,6 @@
         android:largeHeap="true"
         tools:targetApi="34">
 
-        <!-- ═══════════════════════════════════════════════════════════
-             🚨 AdMob — هام جداً 🚨
-             استبدل القيمة التالية بمعرف التطبيق الحقيقي من AdMob Console
-             الشكل: ca-app-pub-9150138133458457~XXXXXXXXXX
-             ⚠️ الـ App ID مختلف تماماً عن الـ Ad Unit ID (9566864752)
-             ⚠️ لو سبتها Test ID، الإعلانات مش هتشتغل أبداً
-             ═══════════════════════════════════════════════════════════ -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-9150138133458457~REPLACE_WITH_REAL_APP_ID"/>
@@ -165,7 +150,6 @@
             android:name="com.google.android.gms.ads.flag.OPTIMIZE_AD_LOADING"
             android:value="true"/>
 
-        <!-- ═══════════════════ MainActivity ═══════════════════ -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -187,7 +171,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
 
-            <!-- Full-screen intent للمنبه -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -199,25 +182,6 @@
             android:name="flutterEmbedding"
             android:value="2"/>
 
-        <!-- ═══════════════════ Home Widget (اختياري) ═══════════════════
-             لو مش هتضيف ملف .RafeeqyWidgetProvider، سيبه متعطل.
-             الكود في main.dart بيعمل try/catch فمش هيسبب crash.
-             لكن الـ widget مش هيظهر.
-        -->
-        <!--
-        <receiver
-            android:name=".RafeeqyWidgetProvider"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/rafeeqy_widget_info"/>
-        </receiver>
-        -->
-
-        <!-- ═══════════════════ flutter_local_notifications ═══════════════════ -->
         <receiver
             android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver"
             android:exported="false"/>
