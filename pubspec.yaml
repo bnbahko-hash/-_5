@@ -77,14 +77,7 @@ flutter:
   uses-material-design: true
 
   # ─── Assets ─────────────────────────────────────────────────────
-  assets:
-    # - assets/sounds/   # <-- تم تعطيله مؤقتًا عشان خطأ البناء (فعّله لما ترفع ملف الصوت alarm.mp3)
-    - assets/images/     # <-- تم تفعيله عشان صورة الأيقونة
-
-# ─── إعدادات أيقونة التطبيق (عشان نحل مشكلة ic_launcher) ──────────
-flutter_launcher_icons:
-  android: "ic_launcher"
-  ios: true
-  image_path: "assets/images/app_icon.png"
-  adaptive_icon_background: "#5B8DEF"
-  adaptive_icon_foreground: "assets/images/app_icon.png"
+  # تم تعطيل كل الملفات مؤقتاً عشان الـ Build ينجح
+  # assets:
+  #   - assets/sounds/
+  #   - assets/images/
