@@ -40,7 +40,7 @@
     <application
         android:label="رفيقي"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@android:drawable/sym_def_app_icon"
         android:requestLegacyExternalStorage="true"
         android:usesCleartextTraffic="true">
 
@@ -94,24 +94,6 @@
         <receiver
             android:name="com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver"
             android:exported="false"/>
-
-        <receiver
-            android:name="es.antonborri.home_widget.HomeWidgetBackgroundReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="es.antonborri.home_widget.action.BACKGROUND"/>
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name="es.antonborri.home_widget.HomeWidgetProvider"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/home_widget_provider_info"/>
-        </receiver>
 
     </application>
 
