@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="rafeeqy_primary">#5B8DEF</color>
+    <color name="rafeeqy_accent">#7E57C2</color>
+    <color name="rafeeqy_bg">#0A0F1E</color>
+    <color name="rafeeqy_card">#161D30</color>
+    <color name="rafeeqy_text">#FFFFFF</color>
+    <color name="rafeeqy_text_dim">#8A9AB8</color>
+    <color name="rafeeqy_success">#66BB6A</color>
+    <color name="rafeeqy_warning">#FFB74D</color>
+    <color name="rafeeqy_danger">#EF5350</color>
+    <color name="rafeeqy_gold">#FFC107</color>
+    <color name="rafeeqy_ocean">#26C6DA</color>
+</resources>
