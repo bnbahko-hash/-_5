@@ -5526,7 +5526,16 @@ class AppState extends ChangeNotifier {
 
   // ═══════════════════════════════════════════════════════════════════════
   //  v12 — WidgetsManager integration (real HomeWidget + deep actions)
-  // ═══════════════════════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════════════════════════
+  //  v12 — WidgetsManager integration (SAFE MODE)
+  //  - لو ملفات الويدجت ناقصة → يتجاهل بهدوء
+  //  - لو الويدجت مش مضاف → يتجاهل بهدوء
+  //  - لو home_widget مش متثبت → يتجاهل بهدوء
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /// لو عايز تعطّل الويدجت تماماً → خليها false
+  static const bool _widgetsEnabled = true;
+
   static const String _iosWidgetName = 'RafeeqyWidget';
   static const String _androidWidgetName = 'RafeeqyWidgetProvider';
   static const String _androidSmallWidget = 'RafeeqySmallWidgetProvider';
@@ -5534,132 +5543,193 @@ class AppState extends ChangeNotifier {
   static const String _androidLargeWidget = 'RafeeqyLargeWidgetProvider';
 
   bool _widgetActionHandlerAttached = false;
-
-  Future<void> _attachWidgetActionHandler() async {
-    if (_widgetActionHandlerAttached) return;
-    _widgetActionHandlerAttached = true;
-    try {
-      await HomeWidget.registerInteractivityCallback(_handleWidgetAction);
-    } catch (_) {}
-  }
-
-  Future<void> _handleWidgetAction(Uri? uri) async {
-    if (uri == null) return;
-    final action = uri.host.isNotEmpty ? uri.host : uri.path;
-    switch (action) {
-      case 'add_water':
-        await addCup();
-        await updateWidgets();
-        break;
-      case 'complete_task':
-        final task = nextTask;
-        if (task != null) {
-          await toggleTask(task);
-        }
-        break;
-      case 'open_rewards':
-        await _notifyWidgetPendingRoute('rewards');
-        break;
-      case 'open_spin':
-        await _notifyWidgetPendingRoute('spin');
-        break;
-      default:
-        break;
-    }
-  }
-
-  // Simple pending route marker for widget taps
+  bool _widgetsAvailable = true; // بتتحول false لو أول محاولة فشلت
   String? _pendingRoute;
+
   String? consumePendingRoute() {
     final r = _pendingRoute;
     _pendingRoute = null;
     return r;
   }
-  Future<void> _notifyWidgetPendingRoute(String route) async {
-    _pendingRoute = route;
-    notifyListeners();
+
+  Future<void> _attachWidgetActionHandler() async {
+    if (_widgetActionHandlerAttached) return;
+    if (!_widgetsEnabled || !_widgetsAvailable) return;
+    try {
+      await HomeWidget.registerInteractivityCallback(_handleWidgetAction);
+      _widgetActionHandlerAttached = true;
+    } catch (_) {
+      _widgetsAvailable = false;
+    }
   }
 
+  Future<void> _handleWidgetAction(Uri? uri) async {
+    if (uri == null) return;
+    try {
+      final action = uri.host.isNotEmpty ? uri.host : uri.path;
+      switch (action) {
+        case 'add_water':
+          await addCup();
+          await updateWidgets();
+          break;
+        case 'complete_task':
+          final task = nextTask;
+          if (task != null) {
+            await toggleTask(task);
+          }
+          break;
+        case 'open_rewards':
+          _pendingRoute = 'rewards';
+          notifyListeners();
+          break;
+        case 'open_spin':
+          _pendingRoute = 'spin';
+          notifyListeners();
+          break;
+        default:
+          break;
+      }
+    } catch (_) {}
+  }
+
+  /// محاولة كتابة قيمة واحدة — صامتة تماماً
+  Future<void> _safeSave<T>(String key, T value) async {
+    try {
+      await HomeWidget.saveWidgetData<T>(key, value);
+    } catch (_) {
+      _widgetsAvailable = false;
+    }
+  }
+
+  /// محاولة تحديث ويدجت معين — صامتة تماماً
+  Future<void> _safeUpdate({
+    required String name,
+    required String iosName,
+    required String androidName,
+  }) async {
+    try {
+      await HomeWidget.updateWidget(
+        name: name,
+        iOSName: iosName,
+        androidName: androidName,
+      );
+    } catch (_) {
+      // نتجاهل — الويدجت مش مضاف أو ملفاته ناقصة
+    }
+  }
+
+  /// تحديث كل الويدجتات — آمنة تماماً
   Future<void> updateWidgets() async {
+    // خروج سريع لو الويدجت معطّل أو غير متاح
+    if (!_widgetsEnabled || !_widgetsAvailable) return;
+
     try {
       await _attachWidgetActionHandler();
+      if (!_widgetsAvailable) return;
+
       final nextT = nextTask;
       final prayer = nextPrayer;
       final w = weather;
-      final streak = habits.isEmpty ? 0 : habits.map((h) => h.currentStreak).reduce(math.max);
+      final streak = habits.isEmpty
+          ? 0
+          : habits.map((h) => h.currentStreak).reduce(math.max);
 
-      // Shared data (all widget sizes)
-      await HomeWidget.saveWidgetData<String>('app_name', kAppName);
-      await HomeWidget.saveWidgetData<String>('user_name', userName);
-      await HomeWidget.saveWidgetData<String>('today_task', nextT?.title ?? 'مفيش مهام');
-      await HomeWidget.saveWidgetData<String>('today_task_time', nextT?.time ?? '—');
-      await HomeWidget.saveWidgetData<String>('next_prayer',
-          prayer != null ? '${prayer.arabicName} ${fmtTime(prayer.time)}' : '—');
-      await HomeWidget.saveWidgetData<String>('weather',
-          w != null ? '${fmtTemp(w.now.temp)} ${WeatherInfo.fromCode(w.now.code, isDay: w.now.isDay).condition}' : '—');
-      await HomeWidget.saveWidgetData<String>('weather_icon',
-          w != null ? '${w.now.code}' : '0');
-      await HomeWidget.saveWidgetData<String>('clock', fmtTime(DateTime.now()));
-      await HomeWidget.saveWidgetData<int>('battery', batteryLevel);
-      await HomeWidget.saveWidgetData<String>('battery_state',
-          batteryState == BatteryState.charging ? 'بيتشحن' : 'بيشتغل');
-      await HomeWidget.saveWidgetData<int>('tasks_done', todayDone);
-      await HomeWidget.saveWidgetData<int>('tasks_total', todayTotal);
-      await HomeWidget.saveWidgetData<int>('tasks_progress_pct',
-          todayTotal == 0 ? 0 : ((todayDone / todayTotal) * 100).round());
-      await HomeWidget.saveWidgetData<int>('streak', streak);
-      final used = totalStorageGb != null && freeStorageGb != null ? totalStorageGb! - freeStorageGb! : 0.0;
-      await HomeWidget.saveWidgetData<String>('storage_used', used.toStringAsFixed(1));
-      await HomeWidget.saveWidgetData<String>('storage_free', (freeStorageGb ?? 0).toStringAsFixed(1));
-      await HomeWidget.saveWidgetData<int>('level', level);
-      await HomeWidget.saveWidgetData<int>('xp', totalXp);
-      await HomeWidget.saveWidgetData<int>('xp_boost', hasXpBoost ? 1 : 0);
-      await HomeWidget.saveWidgetData<int>('goals_active', goals.where((g) => !g.completed).length);
-      await HomeWidget.saveWidgetData<String>('expense_today', fmtMoney(todayExpense));
-      await HomeWidget.saveWidgetData<int>('water', todayCups);
-      await HomeWidget.saveWidgetData<int>('water_goal', waterGoal);
-      await HomeWidget.saveWidgetData<String>('character', activeCharacter.nameAr);
-      await HomeWidget.saveWidgetData<String>('notes_count', notes.length.toString());
-      await HomeWidget.saveWidgetData<String>('alarms_count',
-          alarms.where((a) => a.enabled).length.toString());
-      await HomeWidget.saveWidgetData<int>('daily_reward_ready', canClaimDailyReward ? 1 : 0);
-      await HomeWidget.saveWidgetData<int>('spin_tokens', spinTokens);
-      await HomeWidget.saveWidgetData<int>('streak_shields', streakShields);
-      await HomeWidget.saveWidgetData<String>('daily_reward_label',
-          canClaimDailyReward
-              ? 'مكافأة اليوم جاهزة'
-              : 'مكافآت اليوم مكتملة');
-      await HomeWidget.saveWidgetData<String>('motivation',
-          nextT != null ? 'كمّل: ${nextT.title}' : 'يومك حر — استغل الوقت');
+      // ── كتابة البيانات المشتركة (صامتة) ──
+      await _safeSave<String>('app_name', kAppName);
+      await _safeSave<String>('user_name', userName);
+      await _safeSave<String>('today_task', nextT?.title ?? 'مفيش مهام');
+      await _safeSave<String>('today_task_time', nextT?.time ?? '—');
+      await _safeSave<String>(
+        'next_prayer',
+        prayer != null ? '${prayer.arabicName} ${fmtTime(prayer.time)}' : '—',
+      );
+      await _safeSave<String>(
+        'weather',
+        w != null
+            ? '${fmtTemp(w.now.temp)} ${WeatherInfo.fromCode(w.now.code, isDay: w.now.isDay).condition}'
+            : '—',
+      );
+      await _safeSave<String>('weather_icon', w != null ? '${w.now.code}' : '0');
+      await _safeSave<String>('clock', fmtTime(DateTime.now()));
+      await _safeSave<int>('battery', batteryLevel);
+      await _safeSave<String>(
+        'battery_state',
+        batteryState == BatteryState.charging ? 'بيتشحن' : 'بيشتغل',
+      );
+      await _safeSave<int>('tasks_done', todayDone);
+      await _safeSave<int>('tasks_total', todayTotal);
+      await _safeSave<int>(
+        'tasks_progress_pct',
+        todayTotal == 0 ? 0 : ((todayDone / todayTotal) * 100).round(),
+      );
+      await _safeSave<int>('streak', streak);
+      final used = totalStorageGb != null && freeStorageGb != null
+          ? totalStorageGb! - freeStorageGb!
+          : 0.0;
+      await _safeSave<String>('storage_used', used.toStringAsFixed(1));
+      await _safeSave<String>(
+        'storage_free',
+        (freeStorageGb ?? 0).toStringAsFixed(1),
+      );
+      await _safeSave<int>('level', level);
+      await _safeSave<int>('xp', totalXp);
+      await _safeSave<int>('xp_boost', hasXpBoost ? 1 : 0);
+      await _safeSave<int>(
+        'goals_active',
+        goals.where((g) => !g.completed).length,
+      );
+      await _safeSave<String>('expense_today', fmtMoney(todayExpense));
+      await _safeSave<int>('water', todayCups);
+      await _safeSave<int>('water_goal', waterGoal);
+      await _safeSave<String>('character', activeCharacter.nameAr);
+      await _safeSave<String>('notes_count', notes.length.toString());
+      await _safeSave<String>(
+        'alarms_count',
+        alarms.where((a) => a.enabled).length.toString(),
+      );
+      await _safeSave<int>(
+        'daily_reward_ready',
+        canClaimDailyReward ? 1 : 0,
+      );
+      await _safeSave<int>('spin_tokens', spinTokens);
+      await _safeSave<int>('streak_shields', streakShields);
+      await _safeSave<String>(
+        'daily_reward_label',
+        canClaimDailyReward ? 'مكافأة اليوم جاهزة' : 'مكافآت اليوم مكتملة',
+      );
+      await _safeSave<String>(
+        'motivation',
+        nextT != null ? 'كمّل: ${nextT.title}' : 'يومك حر — استغل الوقت',
+      );
 
-      // Update all registered widgets
-      await HomeWidget.updateWidget(
+      // ── لو فشل أي _safeSave → نخرج من غير تحديث ──
+      if (!_widgetsAvailable) return;
+
+      // ── تحديث الويدجتات (كل واحد في try/catch مستقل) ──
+      await _safeUpdate(
         name: _androidWidgetName,
-        iOSName: _iosWidgetName,
+        iosName: _iosWidgetName,
         androidName: _androidWidgetName,
       );
-      try {
-        await HomeWidget.updateWidget(
-          name: _androidSmallWidget,
-          iOSName: _iosWidgetName,
-          androidName: _androidSmallWidget,
-        );
-      } catch (_) {}
-      try {
-        await HomeWidget.updateWidget(
-          name: _androidMediumWidget,
-          iOSName: _iosWidgetName,
-          androidName: _androidMediumWidget,
-        );
-      } catch (_) {}
-      try {
-        await HomeWidget.updateWidget(
-          name: _androidLargeWidget,
-          iOSName: _iosWidgetName,
-          androidName: _androidLargeWidget,
-        );
-      } catch (_) {}
-    } catch (_) {}
+      await _safeUpdate(
+        name: _androidSmallWidget,
+        iosName: _iosWidgetName,
+        androidName: _androidSmallWidget,
+      );
+      await _safeUpdate(
+        name: _androidMediumWidget,
+        iosName: _iosWidgetName,
+        androidName: _androidMediumWidget,
+      );
+      await _safeUpdate(
+        name: _androidLargeWidget,
+        iosName: _iosWidgetName,
+        androidName: _androidLargeWidget,
+      );
+    } catch (_) {
+      // أي خطأ غير متوقع → نوقف الويدجت للأبد بهدوء
+      _widgetsAvailable = false;
+    }
   }
 
   // ═══════════════════════════════════════════════════════════════════════
