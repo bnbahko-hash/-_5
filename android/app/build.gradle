@@ -2,25 +2,22 @@ plugins {
     id "com.android.application"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
+    id "com.google.gms.google-services"
 }
 
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
-    localPropertiesFile.withReader('UTF-8') { reader ->
-        localProperties.load(reader)
-    }
+    localPropertiesFile.withReader('UTF-8') { reader -> localProperties.load(reader) }
 }
 
-def flutterVersionCode = localProperties.getProperty('flutter.versionCode') ?: '1'
-def flutterVersionName = localProperties.getProperty('flutter.versionName') ?: '1.0.0'
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode') ?: '1200'
+def flutterVersionName = localProperties.getProperty('flutter.versionName') ?: '12.0.0'
 
 android {
-    namespace "com.yossefjoo.rafeeki"
-    compileSdk 36
-
-    // ✅ نسخة NDK مثبّتة مسبقًا على GitHub runners
-    ndkVersion "27.3.13750724"
+    namespace "com.rafeeqy.app"
+    compileSdkVersion 35
+    ndkVersion "27.0.12077973"
 
     compileOptions {
         coreLibraryDesugaringEnabled true
@@ -29,23 +26,54 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = '17'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
     }
 
     defaultConfig {
-        applicationId "com.yossefjoo.rafeeki"
-        minSdk 21
-        targetSdk 34
+        applicationId "com.rafeeqy.app"
+        minSdkVersion 23
+        targetSdkVersion 35
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
+        resConfigs "ar", "en"
+    }
+
+    signingConfigs {
+        release {
+            if (System.getenv("KEYSTORE_PATH") != null) {
+                storeFile file(System.getenv("KEYSTORE_PATH"))
+                storePassword System.getenv("KEYSTORE_PASSWORD")
+                keyAlias System.getenv("KEY_ALIAS")
+                keyPassword System.getenv("KEY_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            signingConfig System.getenv("KEYSTORE_PATH") != null
+                ? signingConfigs.release
+                : signingConfigs.debug
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
             minifyEnabled false
-            shrinkResources false
+            debuggable true
+        }
+    }
+
+    packagingOptions {
+        resources {
+            excludes += ['META-INF/DEPENDENCIES', 'META-INF/LICENSE', 'META-INF/LICENSE.txt',
+                         'META-INF/NOTICE', 'META-INF/NOTICE.txt', 'META-INF/AL2.0',
+                         'META-INF/LGPL2.1']
         }
     }
 }
@@ -55,5 +83,19 @@ flutter {
 }
 
 dependencies {
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.22"
+    implementation "androidx.core:core-ktx:1.13.1"
+    implementation "androidx.appcompat:appcompat:1.7.0"
+    implementation "androidx.multidex:multidex:2.0.1"
+    implementation "androidx.work:work-runtime-ktx:2.9.1"
+    implementation "com.google.android.material:material:1.12.0"
+
+    // Google Mobile Ads
+    implementation "com.google.android.gms:play-services-ads:23.4.0"
+
+    // Desugaring for local notifications
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.1.2"
+
+    // Firebase (for Google Services plugin — optional, remove if not using)
+    // implementation platform("com.google.firebase:firebase-bom:33.4.0")
 }
