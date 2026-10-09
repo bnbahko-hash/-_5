@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/widget_bg_default"
+    android:padding="14dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/ic_stat_rafeeqy"
+            android:tint="@color/rafeeqy_primary"/>
+
+        <TextView
+            android:id="@+id/widget_title_l"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="@string/app_name"
+            android:textColor="@color/rafeeqy_text"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/widget_clock_l"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="—"
+            android:textColor="@color/rafeeqy_text_dim"
+            android:textSize="12sp"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/widget_motivation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:text="يومك حر — استغل الوقت"
+        android:textColor="@color/rafeeqy_text_dim"
+        android:textSize="11sp"
+        android:fontFamily="sans-serif-condensed"/>
+
+    <TextView
+        android:id="@+id/widget_task_l"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:text="مفيش مهام"
+        android:textColor="@color/rafeeqy_text"
+        android:textSize="15sp"
+        android:textStyle="bold"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/widget_prayer_l"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="الصلاة: —"
+                android:textColor="@color/rafeeqy_ocean"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/widget_weather_l"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="الطقس: —"
+                android:textColor="@color/rafeeqy_primary"
+                android:textSize="12sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/widget_battery_l"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="بطارية: —"
+                android:textColor="@color/rafeeqy_success"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/widget_xp_l"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="XP: 0"
+                android:textColor="@color/rafeeqy_gold"
+                android:textSize="12sp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/widget_daily_reward"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:text="🎁 مكافأة اليوم متاحة"
+        android:textColor="@color/rafeeqy_gold"
+        android:textSize="12sp"
+        android:textStyle="bold"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/widget_btn_task_l"
+            android:layout_width="0dp"
+            android:layout_height="34dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="4dp"
+            android:text="✓ مهمة"
+            android:textColor="@color/rafeeqy_text"
+            android:textSize="11sp"
+            android:background="@drawable/widget_button_bg"/>
+
+        <Button
+            android:id="@+id/widget_btn_water_l"
+            android:layout_width="0dp"
+            android:layout_height="34dp"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:text="+ مية"
+            android:textColor="@color/rafeeqy_text"
+            android:textSize="11sp"
+            android:background="@drawable/widget_button_bg"/>
+
+        <Button
+            android:id="@+id/widget_btn_rewards_l"
+            android:layout_width="0dp"
+            android:layout_height="34dp"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp"
+            android:text="🎁 مكافآت"
+            android:textColor="@color/rafeeqy_text"
+            android:textSize="11sp"
+            android:background="@drawable/widget_button_bg"/>
+    </LinearLayout>
+</LinearLayout>
