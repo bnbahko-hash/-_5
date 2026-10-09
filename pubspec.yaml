@@ -1,11 +1,11 @@
 name: rafeeqy
-description: رفيقي — التطبيق العربي الشامل + JOO TOOLS + AdMob Rewarded
+description: "رفيقي — التطبيق العربي الشامل + JOO TOOLS. Developer: YOSSEF"
 publish_to: 'none'
-version: 11.0.0+1100
+version: 12.0.0+1200
 
 environment:
-  sdk: '>=3.5.0 <4.0.0'
-  flutter: '>=3.24.0'
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: ">=3.19.0"
 
 dependencies:
   flutter:
@@ -13,62 +13,85 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
+  # ─── Core ────────────────────────────────────────────────
   cupertino_icons: ^1.0.8
 
-  # Device & System
-  android_intent_plus: ^5.3.0
-  battery_plus: ^6.2.1
-  connectivity_plus: ^6.1.0
-  device_info_plus: ^11.2.0
-  network_info_plus: ^6.1.0
-  permission_handler: ^11.3.1
-  package_info_plus: ^8.1.2
+  # ─── Storage ─────────────────────────────────────────────
+  shared_preferences: ^2.3.2
+  flutter_secure_storage: ^9.2.2
+  path_provider: ^2.1.4
 
-  # Contacts & Security
+  # ─── Device & System ─────────────────────────────────────
+  device_info_plus: ^10.1.2
+  battery_plus: ^6.0.2
+  connectivity_plus: ^6.0.5
+  network_info_plus: ^6.0.2
+  package_info_plus: ^8.1.1
+
+  # ─── UI & Interaction ────────────────────────────────────
+  local_auth: ^2.3.0
   flutter_contacts: ^1.1.9+2
-  local_auth: ^2.2.0
+  flutter_local_notifications: ^17.2.3
+  timezone: ^0.9.4
+  permission_handler: ^11.3.1
+  android_intent_plus: ^5.0.0
 
-  # Storage
-  shared_preferences: ^2.3.3
-  flutter_secure_storage: ^9.2.4
-  path_provider: ^2.1.5
+  # ─── Ads ─────────────────────────────────────────────────
+  google_mobile_ads: ^5.2.0
 
-  # Media
-  audioplayers: ^6.1.0
-  image_picker: ^1.1.2
-
-  # Files
-  file_picker: ^8.1.7
-  open_filex: ^4.6.0
-
-  # PDF
-  pdf: ^3.11.1
-  printing: ^5.13.4
-  syncfusion_flutter_pdfviewer: ^28.2.12
-
-  # OCR
-  google_mlkit_text_recognition: ^0.14.0
-
-  # Notifications
-  flutter_local_notifications: ^18.0.1
-  timezone: ^0.10.0
-
-  # Networking
-  http: ^1.2.2
-  url_launcher: ^6.3.1
-
-  share_plus: ^10.1.2
-
-  # Widgets
+  # ─── Widgets ─────────────────────────────────────────────
   home_widget: ^0.7.0
 
-  # Ads
-  google_mobile_ads: ^5.3.0
+  # ─── Media & Files ───────────────────────────────────────
+  audioplayers: ^6.1.0
+  file_picker: ^8.1.2
+  image_picker: ^1.1.2
+  open_filex: ^4.5.0
+  share_plus: ^10.0.2
+  url_launcher: ^6.3.0
+
+  # ─── PDF & Documents ─────────────────────────────────────
+  pdf: ^3.11.1
+  printing: ^5.13.2
+  syncfusion_flutter_pdfviewer: ^27.1.48
+
+  # ─── OCR ─────────────────────────────────────────────────
+  google_mlkit_text_recognition: ^0.13.0
+
+  # ─── Network ─────────────────────────────────────────────
+  http: ^1.2.2
+
+  # ─── Utils ───────────────────────────────────────────────
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/sounds/
+    - assets/images/
+  fonts:
+    - family: Cairo
+      fonts:
+        - asset: assets/fonts/Cairo-Regular.ttf
+        - asset: assets/fonts/Cairo-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Cairo-Black.ttf
+          weight: 900
+    - family: Tajawal
+      fonts:
+        - asset: assets/fonts/Tajawal-Regular.ttf
+        - asset: assets/fonts/Tajawal-Bold.ttf
+          weight: 700
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/icon.png"
+  adaptive_icon_background: "#5B8DEF"
+  adaptive_icon_foreground: "assets/images/icon_fg.png"
