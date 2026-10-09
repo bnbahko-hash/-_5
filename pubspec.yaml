@@ -4,8 +4,8 @@ publish_to: 'none'
 version: 12.0.0+1200
 
 environment:
-  sdk: '>=3.3.0 <4.0.0'
-  flutter: ">=3.19.0"
+  sdk: '>=3.4.0 <4.0.0'
+  flutter: ">=3.22.0"
 
 dependencies:
   flutter:
@@ -17,24 +17,24 @@ dependencies:
   cupertino_icons: ^1.0.8
 
   # ─── Storage ─────────────────────────────────────────────
-  shared_preferences: ^2.3.2
+  shared_preferences: ^2.3.3
   flutter_secure_storage: ^9.2.2
-  path_provider: ^2.1.4
+  path_provider: ^2.1.5
 
   # ─── Device & System ─────────────────────────────────────
-  device_info_plus: ^10.1.2
-  battery_plus: ^6.0.2
-  connectivity_plus: ^6.0.5
-  network_info_plus: ^6.0.2
-  package_info_plus: ^8.1.1
+  device_info_plus: ^11.2.0          # ✅ محدّث (كان 10.1.2)
+  battery_plus: ^6.1.0
+  connectivity_plus: ^6.1.0
+  network_info_plus: ^6.1.0
+  package_info_plus: ^8.1.2
 
   # ─── UI & Interaction ────────────────────────────────────
   local_auth: ^2.3.0
   flutter_contacts: ^1.1.9+2
-  flutter_local_notifications: ^17.2.3
-  timezone: ^0.9.4
+  flutter_local_notifications: ^18.0.1   # ✅ محدّث
+  timezone: ^0.10.0                       # ✅ محدّث (متوافق مع flutter_local_notifications 18)
   permission_handler: ^11.3.1
-  android_intent_plus: ^5.0.0
+  android_intent_plus: ^5.2.0
 
   # ─── Ads ─────────────────────────────────────────────────
   google_mobile_ads: ^5.2.0
@@ -44,19 +44,19 @@ dependencies:
 
   # ─── Media & Files ───────────────────────────────────────
   audioplayers: ^6.1.0
-  file_picker: ^8.1.2
+  file_picker: ^8.1.6
   image_picker: ^1.1.2
   open_filex: ^4.5.0
-  share_plus: ^10.0.2
-  url_launcher: ^6.3.0
+  share_plus: ^10.1.2
+  url_launcher: ^6.3.1
 
   # ─── PDF & Documents ─────────────────────────────────────
   pdf: ^3.11.1
-  printing: ^5.13.2
+  printing: ^5.13.4
   syncfusion_flutter_pdfviewer: ^28.2.12   # ✅ محدّث
 
   # ─── OCR ─────────────────────────────────────────────────
-  google_mlkit_text_recognition: ^0.13.0
+  google_mlkit_text_recognition: ^0.14.0   # ✅ محدّث
 
   # ─── Network ─────────────────────────────────────────────
   http: ^1.2.2
@@ -67,19 +67,24 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
 
 flutter:
   uses-material-design: true
+  # ↓↓↓ علّق دول لحد ما ترفع الملفات على GitHub ↓↓↓
   # assets:
   #   - assets/sounds/
   #   - assets/images/
-  # fonts:  ← علّقهم لو الملفات مش مرفوعة
+  # fonts:
   #   - family: Cairo
   #     fonts:
   #       - asset: assets/fonts/Cairo-Regular.ttf
-
-# flutter_launcher_icons:  ← علّقه لو الأيقونات مش مرفوعة
-#   android: true
-#   ios: true
-#   image_path: "assets/images/icon.png"
+  #       - asset: assets/fonts/Cairo-Bold.ttf
+  #         weight: 700
+  #       - asset: assets/fonts/Cairo-Black.ttf
+  #         weight: 900
+  #   - family: Tajawal
+  #     fonts:
+  #       - asset: assets/fonts/Tajawal-Regular.ttf
+  #       - asset: assets/fonts/Tajawal-Bold.ttf
+  #         weight: 700
