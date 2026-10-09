@@ -53,7 +53,7 @@ dependencies:
   # ─── PDF & Documents ─────────────────────────────────────
   pdf: ^3.11.1
   printing: ^5.13.2
-  syncfusion_flutter_pdfviewer: ^27.1.48
+  syncfusion_flutter_pdfviewer: ^28.2.12   # ✅ محدّث
 
   # ─── OCR ─────────────────────────────────────────────────
   google_mlkit_text_recognition: ^0.13.0
@@ -62,36 +62,24 @@ dependencies:
   http: ^1.2.2
 
   # ─── Utils ───────────────────────────────────────────────
-  intl: ^0.20.2   # ✅ متوافق مع flutter_localizations
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
-  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
-  assets:
-    - assets/sounds/
-    - assets/images/
-  fonts:
-    - family: Cairo
-      fonts:
-        - asset: assets/fonts/Cairo-Regular.ttf
-        - asset: assets/fonts/Cairo-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/Cairo-Black.ttf
-          weight: 900
-    - family: Tajawal
-      fonts:
-        - asset: assets/fonts/Tajawal-Regular.ttf
-        - asset: assets/fonts/Tajawal-Bold.ttf
-          weight: 700
+  # assets:
+  #   - assets/sounds/
+  #   - assets/images/
+  # fonts:  ← علّقهم لو الملفات مش مرفوعة
+  #   - family: Cairo
+  #     fonts:
+  #       - asset: assets/fonts/Cairo-Regular.ttf
 
-flutter_launcher_icons:
-  android: true
-  ios: true
-  image_path: "assets/images/icon.png"
-  adaptive_icon_background: "#5B8DEF"
-  adaptive_icon_foreground: "assets/images/icon_fg.png"
+# flutter_launcher_icons:  ← علّقه لو الأيقونات مش مرفوعة
+#   android: true
+#   ios: true
+#   image_path: "assets/images/icon.png"
