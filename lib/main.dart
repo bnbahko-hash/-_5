@@ -1,10 +1,15 @@
 // ═══════════════════════════════════════════════════════════════════════════
-//  رفيقي — Rafeeqy v11.0.0
+//  رفيقي — Rafeeqy v12.0.0
 //  التطبيق العربي الشامل + JOO TOOLS
 //  Developer: YOSSEF  |  WhatsApp: 01029892573
-//  ⚡ v11.0.0 — Massive UI/UX Rebuild + Rafeeq Characters + Themes +
-//     App Lock + WhatsApp Bulk + Call Mode + Real Widgets + Full Notifs +
-//     Sound Picker + AdMob (Banner/Interstitial/Rewarded) + Rewards
+//  ⚡ v12.0.0 — Massive Update:
+//     ✅ Real Home Widgets (multi-size + interactive + deep actions)
+//     ✅ Full Rewards Center (Daily + Streak + Spin Wheel + Chests + Shop)
+//     ✅ Gift Codes Redemption System
+//     ✅ Enhanced AdMob (Rewarded with daily limits + cooldown + anti-abuse)
+//     ✅ XP Multipliers + Boosters
+//     ✅ Level-up Cinematic Rewards
+//     ✅ Full preservation of v11 features & visual identity
 // ═══════════════════════════════════════════════════════════════════════════
 
 import 'dart:async';
@@ -55,7 +60,7 @@ const String kAppName = 'رفيقي';
 const String kDevName = 'YOSSEF';
 const String kDevPhone = '01029892573';
 const String kDevWhatsApp = '201029892573';
-const String kVersion = '11.0.0';
+const String kVersion = '12.0.0';
 
 // ─── AdMob ───────────────────────────────────────────────────────────────
 const String kAdMobAppId = 'ca-app-pub-9150138133458457~4426218719';
@@ -1544,75 +1549,45 @@ class RafeeqCharacter {
 
 const List<RafeeqCharacter> kRafeeqCharacters = [
   RafeeqCharacter(
-    id: 'panda',
-    nameAr: 'بندة',
-    nameEn: 'Panda',
+    id: 'panda', nameAr: 'بندة', nameEn: 'Panda',
     description: 'رفيقك الأساسي، لطيف ومرح ودايماً معاك',
-    icon: Icons.pets_rounded,
-    color: Color(0xFF5B8DEF),
-    unlockXp: 0,
-    defaultMood: RafeeqMood.happy,
-    personality: 'لطيف، ودود، ويشجعك دايماً',
+    icon: Icons.pets_rounded, color: Color(0xFF5B8DEF), unlockXp: 0,
+    defaultMood: RafeeqMood.happy, personality: 'لطيف، ودود، ويشجعك دايماً',
     unlockPhrases: ['أهلاً بيك!'],
   ),
   RafeeqCharacter(
-    id: 'fox',
-    nameAr: 'فُكس',
-    nameEn: 'Fox',
+    id: 'fox', nameAr: 'فُكس', nameEn: 'Fox',
     description: 'ذكي وسريع، بيساعدك تخطط وتركّز',
-    icon: Icons.psychology_rounded,
-    color: Color(0xFFFF9800),
-    unlockXp: 200,
-    defaultMood: RafeeqMood.thinking,
-    personality: 'ذكي، استراتيجي، يحب التخطيط',
+    icon: Icons.psychology_rounded, color: Color(0xFFFF9800), unlockXp: 200,
+    defaultMood: RafeeqMood.thinking, personality: 'ذكي، استراتيجي، يحب التخطيط',
     unlockPhrases: ['يلا نخطط لهدف جديد!', 'الشغل الذكي أهم من الشغل الكتير'],
   ),
   RafeeqCharacter(
-    id: 'cat',
-    nameAr: 'قِطّو',
-    nameEn: 'Kitto',
+    id: 'cat', nameAr: 'قِطّو', nameEn: 'Kitto',
     description: 'هادي وبيهتم براحتك وصحتك النفسية',
-    icon: Icons.self_improvement_rounded,
-    color: Color(0xFFEC407A),
-    unlockXp: 500,
-    defaultMood: RafeeqMood.sleep,
-    personality: 'هادي، مهتم بالراحة، يحب التأمل',
+    icon: Icons.self_improvement_rounded, color: Color(0xFFEC407A), unlockXp: 500,
+    defaultMood: RafeeqMood.sleep, personality: 'هادي، مهتم بالراحة، يحب التأمل',
     unlockPhrases: ['خد نَفَس عميق', 'الراحة جزء من الإنتاجية'],
   ),
   RafeeqCharacter(
-    id: 'dragon',
-    nameAr: 'تنّين',
-    nameEn: 'Dragon',
+    id: 'dragon', nameAr: 'تنّين', nameEn: 'Dragon',
     description: 'قوي وشجاع، بيدفعك تنجز أكتر',
-    icon: Icons.local_fire_department_rounded,
-    color: Color(0xFFE64A19),
-    unlockXp: 1000,
-    defaultMood: RafeeqMood.excited,
-    personality: 'قوي، محفّز، لا يستسلم',
+    icon: Icons.local_fire_department_rounded, color: Color(0xFFE64A19), unlockXp: 1000,
+    defaultMood: RafeeqMood.excited, personality: 'قوي، محفّز، لا يستسلم',
     unlockPhrases: ['إنت أقوى من كده!', 'لا تستسلم أبداً'],
   ),
   RafeeqCharacter(
-    id: 'owl',
-    nameAr: 'بومة',
-    nameEn: 'Owl',
+    id: 'owl', nameAr: 'بومة', nameEn: 'Owl',
     description: 'حكيم، يعرف أسرار التركيز العميق',
-    icon: Icons.nightlight_round,
-    color: Color(0xFF5C6BC0),
-    unlockXp: 2000,
-    defaultMood: RafeeqMood.thinking,
-    personality: 'حكيم، يعرف كل شيء، صبور',
+    icon: Icons.nightlight_round, color: Color(0xFF5C6BC0), unlockXp: 2000,
+    defaultMood: RafeeqMood.thinking, personality: 'حكيم، يعرف كل شيء، صبور',
     unlockPhrases: ['التركيز العميق هو سر الإنجاز', 'اصبر، الخير قادم'],
   ),
   RafeeqCharacter(
-    id: 'star',
-    nameAr: 'نجمة',
-    nameEn: 'Star',
+    id: 'star', nameAr: 'نجمة', nameEn: 'Star',
     description: 'مشرقة، بتحتفل بكل إنجاز صغير',
-    icon: Icons.auto_awesome_rounded,
-    color: Color(0xFFFFC107),
-    unlockXp: 5000,
-    defaultMood: RafeeqMood.success,
-    personality: 'متفائلة، تحتفل بالإنجازات',
+    icon: Icons.auto_awesome_rounded, color: Color(0xFFFFC107), unlockXp: 5000,
+    defaultMood: RafeeqMood.success, personality: 'متفائلة، تحتفل بالإنجازات',
     unlockPhrases: ['مبروك! إنت نجم', 'كل خطوة صغيرة مهمة'],
   ),
 ];
@@ -1849,8 +1824,6 @@ class FileItem {
   }
 }
 
-// ─── WhatsApp Bulk ──────────────────────────────────────────────────────
-
 class WaContact {
   String id, name, phone;
   bool selected;
@@ -1858,8 +1831,6 @@ class WaContact {
     String? id, required this.name, required this.phone, this.selected = false,
   }) : id = id ?? _uid();
 }
-
-// ─── Security ────────────────────────────────────────────────────────────
 
 class SecurityHeader {
   final String name;
@@ -1913,7 +1884,100 @@ class SecurityReport {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-//  Achievements / Challenges / Rewards
+//  v12 — NEW: Rewards System Models
+// ═══════════════════════════════════════════════════════════════════════════
+
+class DailyReward {
+  final int day;
+  final String label;
+  final int xp;
+  final IconData icon;
+  final Color color;
+  final String? unlock;
+  const DailyReward({
+    required this.day, required this.label, required this.xp,
+    required this.icon, required this.color, this.unlock,
+  });
+}
+
+const List<DailyReward> kDailyRewards = [
+  DailyReward(day: 1, label: 'بداية الأسبوع', xp: 20, icon: Icons.looks_one_rounded, color: Color(0xFF5B8DEF)),
+  DailyReward(day: 2, label: 'يوم 2', xp: 30, icon: Icons.looks_two_rounded, color: Color(0xFF66BB6A)),
+  DailyReward(day: 3, label: 'يوم 3 + حماية', xp: 50, icon: Icons.shield_rounded, color: Color(0xFF26A69A), unlock: 'streak_shield'),
+  DailyReward(day: 4, label: 'يوم 4', xp: 60, icon: Icons.looks_4_rounded, color: Color(0xFFFFB74D)),
+  DailyReward(day: 5, label: 'يوم 5', xp: 80, icon: Icons.looks_5_rounded, color: Color(0xFFFF9800)),
+  DailyReward(day: 6, label: 'يوم 6', xp: 100, icon: Icons.looks_6_rounded, color: Color(0xFFEF5350)),
+  DailyReward(day: 7, label: 'اليوم الذهبي!', xp: 250, icon: Icons.emoji_events_rounded, color: Color(0xFFFFC107), unlock: 'spin_free'),
+];
+
+class SpinPrize {
+  final String id;
+  final String label;
+  final int xp;
+  final Color color;
+  final double weight;
+  final String? unlock;
+  const SpinPrize({
+    required this.id, required this.label, required this.xp,
+    required this.color, required this.weight, this.unlock,
+  });
+}
+
+const List<SpinPrize> kSpinPrizes = [
+  SpinPrize(id: 'p1', label: '+10 XP', xp: 10, color: Color(0xFF5B8DEF), weight: 30),
+  SpinPrize(id: 'p2', label: '+25 XP', xp: 25, color: Color(0xFF66BB6A), weight: 25),
+  SpinPrize(id: 'p3', label: '+50 XP', xp: 50, color: Color(0xFFFFB74D), weight: 18),
+  SpinPrize(id: 'p4', label: '+100 XP', xp: 100, color: Color(0xFFEF5350), weight: 10),
+  SpinPrize(id: 'p5', label: '+200 XP', xp: 200, color: Color(0xFF7E57C2), weight: 5),
+  SpinPrize(id: 'p6', label: 'حماية سلسلة', xp: 0, color: Color(0xFF26A69A), weight: 7, unlock: 'streak_shield'),
+  SpinPrize(id: 'p7', label: 'XP مضاعف', xp: 0, color: Color(0xFFFFC107), weight: 3, unlock: 'xp_boost_2h'),
+  SpinPrize(id: 'p8', label: 'جاكبوت +500', xp: 500, color: Color(0xFFE91E63), weight: 2),
+];
+
+class GiftCode {
+  final String code;
+  final int xp;
+  final String? unlock;
+  final int maxUses;
+  const GiftCode({required this.code, required this.xp, this.unlock, this.maxUses = 0});
+}
+
+const List<GiftCode> kGiftCodes = [
+  GiftCode(code: 'RAFEEQY2025', xp: 200),
+  GiftCode(code: 'WELCOME500', xp: 500, unlock: 'streak_shield'),
+  GiftCode(code: 'JOO1000', xp: 1000),
+  GiftCode(code: 'EGYPT2025', xp: 300),
+  GiftCode(code: 'RTL200', xp: 200),
+];
+
+class RewardItem {
+  final String id;
+  final String title;
+  final String description;
+  final IconData icon;
+  final Color color;
+  final int cost;
+  final bool oneTime;
+  const RewardItem({
+    required this.id, required this.title, required this.description,
+    required this.icon, required this.color, required this.cost, this.oneTime = false,
+  });
+}
+
+const List<RewardItem> kRewards = [
+  RewardItem(id: 'themepack1', title: 'ثيم المحيط', description: 'افتح ثيم المحيط الأزرق', icon: Icons.water_rounded, color: Color(0xFF0288D1), cost: 500, oneTime: true),
+  RewardItem(id: 'themepack2', title: 'ثيم الفضاء', description: 'افتح ثيم الفضاء', icon: Icons.rocket_launch_rounded, color: Color(0xFF5C6BC0), cost: 1000, oneTime: true),
+  RewardItem(id: 'themepack3', title: 'ثيم النار', description: 'افتح ثيم النار', icon: Icons.local_fire_department_rounded, color: Color(0xFFE64A19), cost: 1500, oneTime: true),
+  RewardItem(id: 'xp_boost_2h', title: 'XP مضاعف (ساعتين)', description: 'ضاعف نقاطك لمدة ساعتين', icon: Icons.bolt_rounded, color: Color(0xFFFFC107), cost: 300),
+  RewardItem(id: 'streak_shield', title: 'درع السلسلة', description: 'احمي سلسلتك ليوم', icon: Icons.shield_rounded, color: Color(0xFF26A69A), cost: 200),
+  RewardItem(id: 'custom_accent', title: 'لون مخصص', description: 'اختر لونك المفضل', icon: Icons.palette_rounded, color: Color(0xFFEC407A), cost: 400),
+  RewardItem(id: 'mascot_skin', title: 'شكل جديد للرفيق', description: 'غيّر شكل رفيقك', icon: Icons.pets_rounded, color: Color(0xFFFFB74D), cost: 700),
+  RewardItem(id: 'free_spin', title: 'لفة إضافية', description: 'لفة مجانية على عجلة الحظ', icon: Icons.casino_rounded, color: Color(0xFF9C27B0), cost: 150),
+  RewardItem(id: 'instant_xp', title: '100 XP فوري', description: 'احصل على XP فوراً', icon: Icons.add_rounded, color: Color(0xFF66BB6A), cost: 400),
+];
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Achievements / Challenges
 // ═══════════════════════════════════════════════════════════════════════════
 
 const List<Achievement> kAchievements = [
@@ -1957,6 +2021,15 @@ const List<Achievement> kAchievements = [
   Achievement(id: 'app_lock', title: 'حامي خصوصيتك', description: 'فعّلت قفل التطبيق', icon: Icons.lock_rounded, color: Color(0xFF5C6BC0), target: 1, xp: 20),
   Achievement(id: 'character_unlock', title: 'صاحب رفاق', description: 'فتحت رفيق جديد', icon: Icons.people_alt_rounded, color: Color(0xFFFFB74D), target: 1, xp: 50),
   Achievement(id: 'ad_reward', title: 'صاحب المكافآت', description: 'شاهدت إعلان بمكافأة', icon: Icons.play_circle_fill_rounded, color: Color(0xFF26C6DA), target: 1, xp: 25),
+  // v12 new achievements
+  Achievement(id: 'v12_daily_first', title: 'مكافأة أول يوم', description: 'استلمت مكافأة اليوم الأول', icon: Icons.card_giftcard_rounded, color: Color(0xFFEC407A), target: 1, xp: 20),
+  Achievement(id: 'v12_daily_7', title: 'أسبوع كامل من المكافآت', description: 'استلمت 7 أيام متتالية', icon: Icons.calendar_month_rounded, color: Color(0xFFFFC107), target: 7, xp: 200),
+  Achievement(id: 'v12_spin_first', title: 'أول لفة', description: 'لعبت على عجلة الحظ', icon: Icons.casino_rounded, color: Color(0xFF9C27B0), target: 1, xp: 25),
+  Achievement(id: 'v12_spin_10', title: 'محترف الحظ', description: '10 لفات على العجلة', icon: Icons.toys_rounded, color: Color(0xFF7E57C2), target: 10, xp: 150),
+  Achievement(id: 'v12_gift_code', title: 'المستكشف', description: 'استخدمت كود هدية', icon: Icons.redeem_rounded, color: Color(0xFF26C6DA), target: 1, xp: 50),
+  Achievement(id: 'v12_widget_added', title: 'صاحب الويدجت', description: 'أضفت ويدجت على الشاشة', icon: Icons.widgets_rounded, color: Color(0xFF5B8DEF), target: 1, xp: 60),
+  Achievement(id: 'v12_ads_5', title: 'خمس إعلانات', description: 'شاهدت 5 إعلانات بمكافأة', icon: Icons.play_circle_fill_rounded, color: Color(0xFF26C6DA), target: 5, xp: 100),
+  Achievement(id: 'v12_ads_25', title: 'مشاهد محترف', description: 'شاهدت 25 إعلان بمكافأة', icon: Icons.play_circle_fill_rounded, color: Color(0xFFEF5350), target: 25, xp: 400),
 ];
 
 const List<Challenge> kDailyChallenges = [
@@ -1968,35 +2041,11 @@ const List<Challenge> kDailyChallenges = [
   Challenge(id: 'chal_gratitude', title: '3 امتنان', description: 'اكتب 3 حاجات ممتن لها', icon: Icons.favorite_rounded, color: Color(0xFFEC407A), type: 'daily', target: 3, xp: 30),
   Challenge(id: 'chal_scan', title: 'امسح مستند', description: 'امسح مستند واحد', icon: Icons.document_scanner_rounded, color: Color(0xFF26C6DA), type: 'daily', target: 1, xp: 40),
   Challenge(id: 'chal_read', title: 'اقرا 10 صفحات', description: 'اقرا كتاب', icon: Icons.menu_book_rounded, color: Color(0xFF7E57C2), type: 'daily', target: 10, xp: 40),
-];
-
-// ─── Rewards Catalog ─────────────────────────────────────────────────────
-
-class RewardItem {
-  final String id;
-  final String title;
-  final String description;
-  final IconData icon;
-  final Color color;
-  final int cost;
-  final bool oneTime;
-  const RewardItem({
-    required this.id, required this.title, required this.description,
-    required this.icon, required this.color, required this.cost, this.oneTime = false,
-  });
-}
-
-const List<RewardItem> kRewards = [
-  RewardItem(id: 'themepack1', title: 'ثيم المحيط', description: 'افتح ثيم المحيط الأزرق', icon: Icons.water_rounded, color: Color(0xFF0288D1), cost: 500, oneTime: true),
-  RewardItem(id: 'themepack2', title: 'ثيم الفضاء', description: 'افتح ثيم الفضاء', icon: Icons.rocket_launch_rounded, color: Color(0xFF5C6BC0), cost: 1000, oneTime: true),
-  RewardItem(id: 'xp_boost', title: 'XP مضاعف (ساعة)', description: 'ضاعف نقاطك لمدة ساعة', icon: Icons.bolt_rounded, color: Color(0xFFFFC107), cost: 200),
-  RewardItem(id: 'streak_shield', title: 'درع السلسلة', description: 'احمي سلسلتك ليوم', icon: Icons.shield_rounded, color: Color(0xFF26A69A), cost: 300),
-  RewardItem(id: 'custom_accent', title: 'لون مخصص', description: 'اختر لونك المفضل', icon: Icons.palette_rounded, color: Color(0xFFEC407A), cost: 400),
-  RewardItem(id: 'mascot_skin', title: 'شكل جديد للرفيق', description: 'غيّر شكل رفيقك', icon: Icons.pets_rounded, color: Color(0xFFFFB74D), cost: 700),
+  Challenge(id: 'chal_reward', title: 'استلم مكافأة', description: 'استلم مكافأة اليوم', icon: Icons.card_giftcard_rounded, color: Color(0xFFEC407A), type: 'daily', target: 1, xp: 30),
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════
-//  AdManager — Real AdMob
+//  AdManager — Real AdMob (Enhanced v12 with limits & cooldown)
 // ═══════════════════════════════════════════════════════════════════════════
 
 class AdManager {
@@ -2013,8 +2062,13 @@ class AdManager {
   DateTime? _lastInterstitial;
   static const Duration _minInterstitialGap = Duration(minutes: 3);
 
+  DateTime? _lastRewardedAt;
+  static const Duration _minRewardedGap = Duration(seconds: 45);
+
   int _interstitialShows = 0;
-  int _rewardedShows = 0;
+  int _rewardedShowsToday = 0;
+  DateTime? _rewardedDayAnchor;
+  static const int _maxRewardedPerDay = 15;
 
   bool _loadingInterstitial = false;
   bool _loadingRewarded = false;
@@ -2040,6 +2094,38 @@ class AdManager {
   String get _bannerUnit => kDebugMode ? kTestBannerId : kAdMobUnitId;
   String get _interstitialUnit => kDebugMode ? kTestInterstitialId : kAdMobUnitId;
   String get _rewardedUnit => kDebugMode ? kTestRewardedId : kAdMobUnitId;
+
+  void _bumpRewardedDay() {
+    final today = DateTime.now();
+    if (_rewardedDayAnchor == null ||
+        _rewardedDayAnchor!.year != today.year ||
+        _rewardedDayAnchor!.month != today.month ||
+        _rewardedDayAnchor!.day != today.day) {
+      _rewardedDayAnchor = today;
+      _rewardedShowsToday = 0;
+    }
+  }
+
+  int get rewardedRemainingToday {
+    _bumpRewardedDay();
+    final left = _maxRewardedPerDay - _rewardedShowsToday;
+    return left < 0 ? 0 : left;
+  }
+
+  Duration get rewardedCooldownLeft {
+    if (_lastRewardedAt == null) return Duration.zero;
+    final elapsed = DateTime.now().difference(_lastRewardedAt!);
+    final left = _minRewardedGap - elapsed;
+    return left.isNegative ? Duration.zero : left;
+  }
+
+  bool get canWatchRewarded {
+    if (!_initialized) return false;
+    if (_rewarded == null) return false;
+    if (rewardedRemainingToday <= 0) return false;
+    if (rewardedCooldownLeft > Duration.zero) return false;
+    return true;
+  }
 
   // ─── Banner ───────────────────────────────────────────────
   BannerAd createBanner({required VoidCallback onLoaded}) {
@@ -2181,11 +2267,15 @@ class AdManager {
 
   bool get rewardedReady => _initialized && _rewarded != null;
 
-  Future<void> showRewarded({required VoidCallback onReward}) async {
-    if (!_initialized) return;
+  Future<RewardedShowResult> showRewarded({required VoidCallback onReward}) async {
+    _bumpRewardedDay();
+    if (!_initialized) return RewardedShowResult.notInitialized;
+    if (rewardedRemainingToday <= 0) return RewardedShowResult.dailyLimitReached;
+    final cd = rewardedCooldownLeft;
+    if (cd > Duration.zero) return RewardedShowResult.cooldown;
     if (_rewarded == null) {
       _loadRewarded();
-      return;
+      return RewardedShowResult.notReady;
     }
     _rewardEarned = false;
     _pendingRewardCallback = onReward;
@@ -2193,6 +2283,8 @@ class AdManager {
     ad.fullScreenContentCallback = FullScreenContentCallback(
       onAdDismissedFullScreenContent: (a) {
         if (_rewardEarned) {
+          _lastRewardedAt = DateTime.now();
+          _rewardedShowsToday++;
           _pendingRewardCallback?.call();
         }
         _rewardEarned = false;
@@ -2211,8 +2303,8 @@ class AdManager {
     );
     await ad.show(onUserEarnedReward: (_, __) {
       _rewardEarned = true;
-      _rewardedShows++;
     });
+    return RewardedShowResult.shown;
   }
 
   void dispose() {
@@ -2222,6 +2314,8 @@ class AdManager {
     _rewarded = null;
   }
 }
+
+enum RewardedShowResult { shown, notReady, cooldown, dailyLimitReached, notInitialized }
 
 class BannerAdWidget extends StatefulWidget {
   final EdgeInsets margin;
@@ -2387,15 +2481,16 @@ class AppLockService {
 class Notif {
   static final FlutterLocalNotificationsPlugin _p = FlutterLocalNotificationsPlugin();
   static bool ready = false;
-  static const String channelMain = 'rafeeqy_main_v11';
-  static const String channelBar = 'rafeeqy_bar_v11';
-  static const String channelRemind = 'rafeeqy_reminders_v11';
-  static const String channelPrayer = 'rafeeqy_prayer_v11';
-  static const String channelAlarm = 'rafeeqy_alarm_v11';
-  static const String channelHourly = 'rafeeqy_hourly_v11';
-  static const String channelAchievement = 'rafeeqy_ach_v11';
-  static const String channelWeather = 'rafeeqy_weather_v11';
-  static const String channelCheckIn = 'rafeeqy_checkin_v11';
+  static const String channelMain = 'rafeeqy_main_v12';
+  static const String channelBar = 'rafeeqy_bar_v12';
+  static const String channelRemind = 'rafeeqy_reminders_v12';
+  static const String channelPrayer = 'rafeeqy_prayer_v12';
+  static const String channelAlarm = 'rafeeqy_alarm_v12';
+  static const String channelHourly = 'rafeeqy_hourly_v12';
+  static const String channelAchievement = 'rafeeqy_ach_v12';
+  static const String channelWeather = 'rafeeqy_weather_v12';
+  static const String channelCheckIn = 'rafeeqy_checkin_v12';
+  static const String channelReward = 'rafeeqy_reward_v12';
 
   static Future<void> init() async {
     try {
@@ -2425,6 +2520,7 @@ class Notif {
       (channelAchievement, 'الإنجازات', 'إشعارات الإنجازات', Importance.high, true, true),
       (channelWeather, 'الطقس', 'تنبيهات الطقس', Importance.high, true, true),
       (channelCheckIn, 'تذكير ذكي', 'تذكير دوري', Importance.defaultImportance, true, true),
+      (channelReward, 'المكافآت', 'مكافآت اليوم', Importance.high, true, true),
     ]) {
       await android.createNotificationChannel(AndroidNotificationChannel(
         c.$1, c.$2, description: c.$3, importance: c.$4, playSound: c.$5, enableVibration: c.$6,
@@ -2442,6 +2538,7 @@ class Notif {
       case channelAchievement: return 'الإنجازات';
       case channelWeather: return 'الطقس';
       case channelCheckIn: return 'تذكير ذكي';
+      case channelReward: return 'المكافآت';
       default: return 'رفيقي — إشعارات';
     }
   }
@@ -2487,6 +2584,19 @@ class Notif {
           importance: Importance.high, priority: Priority.high,
           styleInformation: BigTextStyleInformation(body),
           enableVibration: true, playSound: true, color: const Color(0xFFFFC107),
+        )));
+    } catch (_) {}
+  }
+
+  static Future<void> showReward(String title, String body) async {
+    if (!ready) return;
+    try {
+      await _p.show(DateTime.now().millisecondsSinceEpoch.remainder(100000),
+        title, body, NotificationDetails(android: AndroidNotificationDetails(
+          channelReward, _channelName(channelReward),
+          importance: Importance.high, priority: Priority.high,
+          styleInformation: BigTextStyleInformation(body),
+          enableVibration: true, playSound: true, color: const Color(0xFFEC407A),
         )));
     } catch (_) {}
   }
@@ -3017,8 +3127,6 @@ class PrayerService {
   }
 }
 
-// ─── Contacts Service ───────────────────────────────────────────────────
-
 class ContactsService {
   static Future<List<WaContact>> load({int limit = 500}) async {
     final out = <WaContact>[];
@@ -3042,8 +3150,6 @@ class ContactsService {
   }
 }
 
-// ─── WhatsApp Bulk ──────────────────────────────────────────────────────
-
 class WhatsAppBulkService {
   static String personalize(String template, WaContact c) {
     return template
@@ -3065,8 +3171,6 @@ class WhatsAppBulkService {
     }
   }
 }
-
-// ─── Call Service ──────────────────────────────────────────────────────
 
 class CallService {
   static Future<bool> call(String raw, {String defaultDial = '20'}) async {
@@ -3096,10 +3200,6 @@ class CallService {
     } catch (_) { return false; }
   }
 }
-
-// ═══════════════════════════════════════════════════════════════════════════
-//  Website Security Service
-// ═══════════════════════════════════════════════════════════════════════════
 
 class WebsiteSecurityService {
   static const List<SecurityHeader> recommendedHeaders = [
@@ -3191,10 +3291,6 @@ class WebsiteSecurityService {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-//  WhatsApp Link Service
-// ═══════════════════════════════════════════════════════════════════════════
-
 class WhatsAppLinkService {
   static String cleanNumber(String raw) {
     var s = raw.replaceAll(RegExp(r'[^\d+]'), '');
@@ -3223,10 +3319,6 @@ class WhatsAppLinkService {
     return '';
   }
 }
-
-// ═══════════════════════════════════════════════════════════════════════════
-//  Device / Storage / Network / File / PDF / OCR
-// ═══════════════════════════════════════════════════════════════════════════
 
 class DeviceService {
   static AndroidDeviceInfo? _android;
@@ -3699,6 +3791,16 @@ class AppState extends ChangeNotifier {
   List<String> recentFiles = [];
   List<String> favoriteFiles = [];
 
+  // v12 — Rewards state
+  int dailyRewardDay = 0;              // 1..7
+  String? lastDailyRewardClaimDate;    // YYYY-MM-DD
+  int spinTokens = 1;                  // free spins available
+  int spinCount = 0;
+  int giftCodesUsed = 0;
+  Set<String> redeemedCodes = {};
+  DateTime? xpBoostUntil;              // XP multiplier active until
+  int streakShields = 0;
+
   RafeeqyTheme theme = RafeeqyTheme.system;
   String themePaletteId = 'light';
   Color accent = const Color(0xFF5B8DEF);
@@ -3762,6 +3864,7 @@ class AppState extends ChangeNotifier {
   int whatsappLinksCount = 0;
   int bulkCampaignsCount = 0;
   int adRewardsCount = 0;
+  int widgetAddCount = 0;
 
   Map<String, int> lifeBalance = {
     'الصحة': 5, 'العمل': 5, 'العلاقات': 5, 'المال': 5,
@@ -3795,6 +3898,21 @@ class AppState extends ChangeNotifier {
 
   bool _loaded = false;
   bool get isLoaded => _loaded;
+
+  // ─── v12 helpers ───────────────────────────────────────────
+  bool get hasXpBoost {
+    if (xpBoostUntil == null) return false;
+    return DateTime.now().isBefore(xpBoostUntil!);
+  }
+
+  int get xpBoostMultiplier => hasXpBoost ? 2 : 1;
+
+  bool get canClaimDailyReward {
+    if (lastDailyRewardClaimDate == todayKey()) return false;
+    return true;
+  }
+
+  bool get hasFreeSpin => spinTokens > 0;
 
   Future<void> load() async {
     tasks = Store.list('tasks').map(TaskItem.fromJson).toList();
@@ -3839,6 +3957,21 @@ class AppState extends ChangeNotifier {
     whatsappLinksCount = Store.int_('whatsappLinksCount', def: 0);
     bulkCampaignsCount = Store.int_('bulkCampaignsCount', def: 0);
     adRewardsCount = Store.int_('adRewardsCount', def: 0);
+    widgetAddCount = Store.int_('widgetAddCount', def: 0);
+
+    // v12 rewards state
+    dailyRewardDay = Store.int_('dailyRewardDay', def: 0);
+    lastDailyRewardClaimDate = Store.str('lastDailyRewardClaim');
+    spinTokens = Store.int_('spinTokens', def: 1);
+    spinCount = Store.int_('spinCount', def: 0);
+    giftCodesUsed = Store.int_('giftCodesUsed', def: 0);
+    redeemedCodes = (Store.str('redeemedCodes') ?? '').split(',').where((s) => s.isNotEmpty).toSet();
+    streakShields = Store.int_('streakShields', def: 0);
+    final boostMs = Store.int_('xpBoostUntilMs', def: 0);
+    if (boostMs > 0) {
+      xpBoostUntil = DateTime.fromMillisecondsSinceEpoch(boostMs);
+      if (xpBoostUntil!.isBefore(DateTime.now())) xpBoostUntil = null;
+    }
 
     try {
       final budgetStr = Store.str('budgetCategories');
@@ -3933,7 +4066,16 @@ class AppState extends ChangeNotifier {
       await refreshDevice();
       if (isMuslim) await refreshPrayerTimes();
       await refreshWeather();
+      await _notifyDailyRewardIfNeeded();
     });
+  }
+
+  Future<void> _notifyDailyRewardIfNeeded() async {
+    if (!notifEnabled) return;
+    if (!canClaimDailyReward) return;
+    await Future.delayed(const Duration(seconds: 3));
+    await Notif.showReward('🎁 مكافأة اليوم جاهزة!',
+        'ادخل على مركز المكافآت واستلم مكافأتك اليومية المجانية');
   }
 
   void _attachAlarmListener() {
@@ -3992,8 +4134,9 @@ class AppState extends ChangeNotifier {
   double get levelProgress => xpInLevel / xpToNextLevel;
 
   Future<void> addXp(int amount) async {
-    totalXp += amount;
-    spendableXp += amount;
+    final finalAmount = amount * xpBoostMultiplier;
+    totalXp += finalAmount;
+    spendableXp += finalAmount;
     await Store.setInt('totalXp', totalXp);
     await Store.setInt('spendableXp', spendableXp);
     notifyListeners();
@@ -4001,6 +4144,7 @@ class AppState extends ChangeNotifier {
     if (level >= 10) await _unlockAchievement('level_10');
     if (level >= 20) await _unlockAchievement('level_20');
     await _checkCharacterUnlock();
+    await updateWidgets();
   }
 
   Future<void> _checkCharacterUnlock() async {
@@ -4031,10 +4175,114 @@ class AppState extends ChangeNotifier {
     if (spendableXp < r.cost) return false;
     spendableXp -= r.cost;
     if (r.oneTime) unlockedRewards.add(r.id);
+    if (r.id == 'xp_boost_2h') {
+      xpBoostUntil = DateTime.now().add(const Duration(hours: 2));
+      await Store.setInt('xpBoostUntilMs', xpBoostUntil!.millisecondsSinceEpoch);
+    } else if (r.id == 'streak_shield') {
+      streakShields++;
+      await Store.setInt('streakShields', streakShields);
+    } else if (r.id == 'free_spin') {
+      spinTokens++;
+      await Store.setInt('spinTokens', spinTokens);
+    } else if (r.id == 'instant_xp') {
+      totalXp += 100;
+      await Store.setInt('totalXp', totalXp);
+    }
     await Store.setInt('spendableXp', spendableXp);
     await Store.setStr('rewards', unlockedRewards.join(','));
     notifyListeners();
     return true;
+  }
+
+  // ─── v12 Daily Reward ──────────────────────────────────────
+  Future<int> claimDailyReward() async {
+    if (!canClaimDailyReward) return 0;
+    // Reset streak if more than 48h
+    if (lastDailyRewardClaimDate != null) {
+      final last = parseYmd(lastDailyRewardClaimDate!);
+      final diff = DateTime.now().difference(last).inDays;
+      if (diff > 1) dailyRewardDay = 0;
+    }
+    dailyRewardDay = (dailyRewardDay % 7) + 1;
+    final reward = kDailyRewards[dailyRewardDay - 1];
+    lastDailyRewardClaimDate = todayKey();
+    if (reward.unlock == 'spin_free') {
+      spinTokens += 1;
+      await Store.setInt('spinTokens', spinTokens);
+    } else if (reward.unlock == 'streak_shield') {
+      streakShields += 1;
+      await Store.setInt('streakShields', streakShields);
+    }
+    await Store.setInt('dailyRewardDay', dailyRewardDay);
+    await Store.setStr('lastDailyRewardClaim', lastDailyRewardClaimDate!);
+    await addXp(reward.xp);
+    await _unlockAchievement('v12_daily_first');
+    if (dailyRewardDay >= 7) {
+      await _unlockAchievement('v12_daily_7');
+    }
+    await Notif.showReward('🎁 استلمت مكافأة اليوم ${reward.day}!', '+${reward.xp} XP');
+    notifyListeners();
+    return reward.xp;
+  }
+
+  // ─── v12 Spin Wheel ────────────────────────────────────────
+  SpinPrize _pickRandomPrize() {
+    final total = kSpinPrizes.fold<double>(0, (a, b) => a + b.weight);
+    var r = math.Random().nextDouble() * total;
+    for (final p in kSpinPrizes) {
+      r -= p.weight;
+      if (r <= 0) return p;
+    }
+    return kSpinPrizes.first;
+  }
+
+  Future<SpinPrize?> spinWheel({required bool useToken}) async {
+    if (useToken) {
+      if (spinTokens <= 0) return null;
+      spinTokens -= 1;
+      await Store.setInt('spinTokens', spinTokens);
+    }
+    final prize = _pickRandomPrize();
+    spinCount += 1;
+    await Store.setInt('spinCount', spinCount);
+    if (prize.xp > 0) {
+      await addXp(prize.xp);
+    }
+    if (prize.unlock == 'streak_shield') {
+      streakShields += 1;
+      await Store.setInt('streakShields', streakShields);
+    } else if (prize.unlock == 'xp_boost_2h') {
+      xpBoostUntil = DateTime.now().add(const Duration(hours: 2));
+      await Store.setInt('xpBoostUntilMs', xpBoostUntil!.millisecondsSinceEpoch);
+    }
+    await _unlockAchievement('v12_spin_first');
+    if (spinCount >= 10) await _unlockAchievement('v12_spin_10');
+    notifyListeners();
+    return prize;
+  }
+
+  // ─── v12 Gift Codes ────────────────────────────────────────
+  Future<GiftCode?> redeemGiftCode(String code) async {
+    final clean = code.trim().toUpperCase();
+    if (clean.isEmpty) return null;
+    if (redeemedCodes.contains(clean)) return null;
+    final match = kGiftCodes.firstWhere(
+      (c) => c.code.toUpperCase() == clean,
+      orElse: () => const GiftCode(code: '__none__', xp: 0),
+    );
+    if (match.code == '__none__') return null;
+    redeemedCodes.add(clean);
+    giftCodesUsed += 1;
+    await Store.setStr('redeemedCodes', redeemedCodes.join(','));
+    await Store.setInt('giftCodesUsed', giftCodesUsed);
+    if (match.xp > 0) await addXp(match.xp);
+    if (match.unlock == 'streak_shield') {
+      streakShields += 1;
+      await Store.setInt('streakShields', streakShields);
+    }
+    await _unlockAchievement('v12_gift_code');
+    notifyListeners();
+    return match;
   }
 
   Future<void> _unlockAchievement(String id) async {
@@ -4079,6 +4327,9 @@ class AppState extends ChangeNotifier {
     if (bulkCampaignsCount >= 1) await _unlockAchievement('bulk_first');
     if (AppLockService.I.enabled) await _unlockAchievement('app_lock');
     if (adRewardsCount >= 1) await _unlockAchievement('ad_reward');
+    if (adRewardsCount >= 5) await _unlockAchievement('v12_ads_5');
+    if (adRewardsCount >= 25) await _unlockAchievement('v12_ads_25');
+    if (widgetAddCount >= 1) await _unlockAchievement('v12_widget_added');
     if (isMuslim) {
       final todayLog = prayerLogs.firstWhere((p) => p.date == todayKey(), orElse: () => PrayerLog());
       if (todayLog.prayers.values.where((v) => v).length >= 5) {
@@ -4110,6 +4361,7 @@ class AppState extends ChangeNotifier {
       case 'chal_gratitude': return journalFor(DateTime.now())?.gratitude.length ?? 0;
       case 'chal_scan': return scannedDocs.where((d) => d.createdAt.startsWith(todayKey())).length;
       case 'chal_read': return totalBookPagesRead;
+      case 'chal_reward': return lastDailyRewardClaimDate == todayKey() ? 1 : 0;
       default: return 0;
     }
   }
@@ -5265,50 +5517,157 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ─── Widgets ──────────────────────────────────────────────────────
+  Future<void> incrementWidgetAdd() async {
+    widgetAddCount++;
+    await Store.setInt('widgetAddCount', widgetAddCount);
+    await checkAchievements();
+    notifyListeners();
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════
+  //  v12 — WidgetsManager integration (real HomeWidget + deep actions)
+  // ═══════════════════════════════════════════════════════════════════════
   static const String _iosWidgetName = 'RafeeqyWidget';
   static const String _androidWidgetName = 'RafeeqyWidgetProvider';
+  static const String _androidSmallWidget = 'RafeeqySmallWidgetProvider';
+  static const String _androidMediumWidget = 'RafeeqyMediumWidgetProvider';
+  static const String _androidLargeWidget = 'RafeeqyLargeWidgetProvider';
+
+  bool _widgetActionHandlerAttached = false;
+
+  Future<void> _attachWidgetActionHandler() async {
+    if (_widgetActionHandlerAttached) return;
+    _widgetActionHandlerAttached = true;
+    try {
+      await HomeWidget.registerInteractivityCallback(_handleWidgetAction);
+    } catch (_) {}
+  }
+
+  Future<void> _handleWidgetAction(Uri? uri) async {
+    if (uri == null) return;
+    final action = uri.host.isNotEmpty ? uri.host : uri.path;
+    switch (action) {
+      case 'add_water':
+        await addCup();
+        await updateWidgets();
+        break;
+      case 'complete_task':
+        final task = nextTask;
+        if (task != null) {
+          await toggleTask(task);
+        }
+        break;
+      case 'open_rewards':
+        await _notifyWidgetPendingRoute('rewards');
+        break;
+      case 'open_spin':
+        await _notifyWidgetPendingRoute('spin');
+        break;
+      default:
+        break;
+    }
+  }
+
+  // Simple pending route marker for widget taps
+  String? _pendingRoute;
+  String? consumePendingRoute() {
+    final r = _pendingRoute;
+    _pendingRoute = null;
+    return r;
+  }
+  Future<void> _notifyWidgetPendingRoute(String route) async {
+    _pendingRoute = route;
+    notifyListeners();
+  }
 
   Future<void> updateWidgets() async {
     try {
+      await _attachWidgetActionHandler();
       final nextT = nextTask;
       final prayer = nextPrayer;
       final w = weather;
+      final streak = habits.isEmpty ? 0 : habits.map((h) => h.currentStreak).reduce(math.max);
+
+      // Shared data (all widget sizes)
+      await HomeWidget.saveWidgetData<String>('app_name', kAppName);
+      await HomeWidget.saveWidgetData<String>('user_name', userName);
       await HomeWidget.saveWidgetData<String>('today_task', nextT?.title ?? 'مفيش مهام');
+      await HomeWidget.saveWidgetData<String>('today_task_time', nextT?.time ?? '—');
       await HomeWidget.saveWidgetData<String>('next_prayer',
           prayer != null ? '${prayer.arabicName} ${fmtTime(prayer.time)}' : '—');
       await HomeWidget.saveWidgetData<String>('weather',
           w != null ? '${fmtTemp(w.now.temp)} ${WeatherInfo.fromCode(w.now.code, isDay: w.now.isDay).condition}' : '—');
+      await HomeWidget.saveWidgetData<String>('weather_icon',
+          w != null ? '${w.now.code}' : '0');
       await HomeWidget.saveWidgetData<String>('clock', fmtTime(DateTime.now()));
       await HomeWidget.saveWidgetData<int>('battery', batteryLevel);
       await HomeWidget.saveWidgetData<String>('battery_state',
           batteryState == BatteryState.charging ? 'بيتشحن' : 'بيشتغل');
       await HomeWidget.saveWidgetData<int>('tasks_done', todayDone);
       await HomeWidget.saveWidgetData<int>('tasks_total', todayTotal);
-      final streak = habits.isEmpty ? 0 : habits.map((h) => h.currentStreak).reduce(math.max);
+      await HomeWidget.saveWidgetData<int>('tasks_progress_pct',
+          todayTotal == 0 ? 0 : ((todayDone / todayTotal) * 100).round());
       await HomeWidget.saveWidgetData<int>('streak', streak);
       final used = totalStorageGb != null && freeStorageGb != null ? totalStorageGb! - freeStorageGb! : 0.0;
       await HomeWidget.saveWidgetData<String>('storage_used', used.toStringAsFixed(1));
       await HomeWidget.saveWidgetData<String>('storage_free', (freeStorageGb ?? 0).toStringAsFixed(1));
       await HomeWidget.saveWidgetData<int>('level', level);
       await HomeWidget.saveWidgetData<int>('xp', totalXp);
+      await HomeWidget.saveWidgetData<int>('xp_boost', hasXpBoost ? 1 : 0);
       await HomeWidget.saveWidgetData<int>('goals_active', goals.where((g) => !g.completed).length);
       await HomeWidget.saveWidgetData<String>('expense_today', fmtMoney(todayExpense));
       await HomeWidget.saveWidgetData<int>('water', todayCups);
+      await HomeWidget.saveWidgetData<int>('water_goal', waterGoal);
       await HomeWidget.saveWidgetData<String>('character', activeCharacter.nameAr);
       await HomeWidget.saveWidgetData<String>('notes_count', notes.length.toString());
       await HomeWidget.saveWidgetData<String>('alarms_count',
           alarms.where((a) => a.enabled).length.toString());
+      await HomeWidget.saveWidgetData<int>('daily_reward_ready', canClaimDailyReward ? 1 : 0);
+      await HomeWidget.saveWidgetData<int>('spin_tokens', spinTokens);
+      await HomeWidget.saveWidgetData<int>('streak_shields', streakShields);
+      await HomeWidget.saveWidgetData<String>('daily_reward_label',
+          canClaimDailyReward
+              ? 'مكافأة اليوم جاهزة'
+              : 'مكافآت اليوم مكتملة');
+      await HomeWidget.saveWidgetData<String>('motivation',
+          nextT != null ? 'كمّل: ${nextT.title}' : 'يومك حر — استغل الوقت');
+
+      // Update all registered widgets
       await HomeWidget.updateWidget(
         name: _androidWidgetName,
         iOSName: _iosWidgetName,
         androidName: _androidWidgetName,
       );
+      try {
+        await HomeWidget.updateWidget(
+          name: _androidSmallWidget,
+          iOSName: _iosWidgetName,
+          androidName: _androidSmallWidget,
+        );
+      } catch (_) {}
+      try {
+        await HomeWidget.updateWidget(
+          name: _androidMediumWidget,
+          iOSName: _iosWidgetName,
+          androidName: _androidMediumWidget,
+        );
+      } catch (_) {}
+      try {
+        await HomeWidget.updateWidget(
+          name: _androidLargeWidget,
+          iOSName: _iosWidgetName,
+          androidName: _androidLargeWidget,
+        );
+      } catch (_) {}
     } catch (_) {}
   }
 
+  // ═══════════════════════════════════════════════════════════════════════
+  //  Export / Import
+  // ═══════════════════════════════════════════════════════════════════════
+
   String exportJson() => jsonEncode({
-    'version': 11, 'country': countryCode,
+    'version': 12, 'country': countryCode,
     'exportedAt': DateTime.now().toIso8601String(),
     'tasks': tasks.map((e) => e.toJson()).toList(),
     'habits': habits.map((e) => e.toJson()).toList(),
@@ -5343,6 +5702,16 @@ class AppState extends ChangeNotifier {
     'whatsappLinksCount': whatsappLinksCount,
     'bulkCampaignsCount': bulkCampaignsCount,
     'adRewardsCount': adRewardsCount,
+    // v12
+    'dailyRewardDay': dailyRewardDay,
+    'lastDailyRewardClaimDate': lastDailyRewardClaimDate,
+    'spinTokens': spinTokens,
+    'spinCount': spinCount,
+    'giftCodesUsed': giftCodesUsed,
+    'redeemedCodes': redeemedCodes.toList(),
+    'streakShields': streakShields,
+    'xpBoostUntilMs': xpBoostUntil?.millisecondsSinceEpoch ?? 0,
+    'widgetAddCount': widgetAddCount,
   });
 
   Future<bool> importJson(String raw) async {
@@ -5386,6 +5755,19 @@ class AppState extends ChangeNotifier {
       if (d['whatsappLinksCount'] != null) whatsappLinksCount = d['whatsappLinksCount'] as int;
       if (d['bulkCampaignsCount'] != null) bulkCampaignsCount = d['bulkCampaignsCount'] as int;
       if (d['adRewardsCount'] != null) adRewardsCount = d['adRewardsCount'] as int;
+      if (d['dailyRewardDay'] != null) dailyRewardDay = d['dailyRewardDay'] as int;
+      if (d['lastDailyRewardClaimDate'] != null) lastDailyRewardClaimDate = d['lastDailyRewardClaimDate'] as String?;
+      if (d['spinTokens'] != null) spinTokens = d['spinTokens'] as int;
+      if (d['spinCount'] != null) spinCount = d['spinCount'] as int;
+      if (d['giftCodesUsed'] != null) giftCodesUsed = d['giftCodesUsed'] as int;
+      if (d['redeemedCodes'] != null) redeemedCodes = (d['redeemedCodes'] as List).map((e) => e.toString()).toSet();
+      if (d['streakShields'] != null) streakShields = d['streakShields'] as int;
+      if (d['widgetAddCount'] != null) widgetAddCount = d['widgetAddCount'] as int;
+      final bMs = d['xpBoostUntilMs'] as int?;
+      if (bMs != null && bMs > 0) {
+        xpBoostUntil = DateTime.fromMillisecondsSinceEpoch(bMs);
+        if (xpBoostUntil!.isBefore(DateTime.now())) xpBoostUntil = null;
+      }
       await _saveAll();
       await Notif.cancelAll();
       for (final a in alarms) {
@@ -5430,6 +5812,21 @@ class AppState extends ChangeNotifier {
     await Store.setInt('whatsappLinksCount', whatsappLinksCount);
     await Store.setInt('bulkCampaignsCount', bulkCampaignsCount);
     await Store.setInt('adRewardsCount', adRewardsCount);
+    await Store.setInt('widgetAddCount', widgetAddCount);
+    await Store.setInt('dailyRewardDay', dailyRewardDay);
+    if (lastDailyRewardClaimDate != null) {
+      await Store.setStr('lastDailyRewardClaim', lastDailyRewardClaimDate!);
+    }
+    await Store.setInt('spinTokens', spinTokens);
+    await Store.setInt('spinCount', spinCount);
+    await Store.setInt('giftCodesUsed', giftCodesUsed);
+    await Store.setStr('redeemedCodes', redeemedCodes.join(','));
+    await Store.setInt('streakShields', streakShields);
+    if (xpBoostUntil != null) {
+      await Store.setInt('xpBoostUntilMs', xpBoostUntil!.millisecondsSinceEpoch);
+    } else {
+      await Store.setInt('xpBoostUntilMs', 0);
+    }
     await Store.setStr('countryCode', countryCode);
     await Store.setStr('city', cityName);
   }
@@ -5448,6 +5845,10 @@ class AppState extends ChangeNotifier {
     quranTotalPages = 0; weather = null;
     securityChecksCount = 0; whatsappLinksCount = 0;
     bulkCampaignsCount = 0; adRewardsCount = 0;
+    widgetAddCount = 0;
+    dailyRewardDay = 0; lastDailyRewardClaimDate = null;
+    spinTokens = 1; spinCount = 0; giftCodesUsed = 0;
+    redeemedCodes = {}; streakShields = 0; xpBoostUntil = null;
     for (final k in ['tasks', 'habits', 'expenses', 'journal', 'alarms',
       'study', 'workouts', 'water', 'sleep', 'debts', 'notes', 'events',
       'goals', 'subscriptions', 'timeEntries', 'fasting', 'quran',
@@ -5460,6 +5861,13 @@ class AppState extends ChangeNotifier {
     await Store.setStr('activeCharacter', 'panda');
     await Store.setInt('totalXp', 0);
     await Store.setInt('spendableXp', 0);
+    await Store.setInt('dailyRewardDay', 0);
+    await Store.setStr('lastDailyRewardClaim', '');
+    await Store.setInt('spinTokens', 1);
+    await Store.setInt('spinCount', 0);
+    await Store.setStr('redeemedCodes', '');
+    await Store.setInt('streakShields', 0);
+    await Store.setInt('xpBoostUntilMs', 0);
     await Notif.cancelAll();
     notifyListeners();
   }
@@ -7014,6 +7422,18 @@ class _RootShellState extends State<RootShell> {
     return ListenableBuilder(
       listenable: AppState.I,
       builder: (context, _) {
+        // Handle widget pending route
+        final pending = AppState.I.consumePendingRoute();
+        if (pending == 'rewards') {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) pushPage(context, const RewardsCenterScreen());
+          });
+        } else if (pending == 'spin') {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) pushPage(context, const SpinWheelScreen());
+          });
+        }
+
         final pages = <Widget>[
           const HomeScreen(),
           const TasksScreen(),
@@ -7127,7 +7547,7 @@ class _GlassNavBar extends StatelessWidget {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-//  Home Screen (rebuild)
+//  Home Screen
 // ═══════════════════════════════════════════════════════════════════════════
 
 class HomeScreen extends StatefulWidget {
@@ -7187,6 +7607,22 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(width: 8),
               Text(st.country.currencyAr, style: TextStyle(fontFamily: 'Cairo', fontSize: 12,
                 fontWeight: FontWeight.w800, color: st.accent)),
+              if (st.hasXpBoost) ...[
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFC107).withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: const Color(0xFFFFC107).withValues(alpha: 0.5), width: 1),
+                  ),
+                  child: Row(mainAxisSize: MainAxisSize.min, children: [
+                    const Icon(Icons.bolt_rounded, size: 11, color: Color(0xFFFFA000)),
+                    Text('XP ×2', style: TextStyle(fontFamily: 'Cairo', fontSize: 9.5,
+                      fontWeight: FontWeight.w800, color: const Color(0xFFFFA000))),
+                  ]),
+                ),
+              ],
               const Spacer(),
               Pressable(
                 onTap: () => pushPage(context, const CharacterScreen()),
@@ -7207,7 +7643,45 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ]),
             const SizedBox(height: 14),
-            StaggeredItem(index: 0, child: GlassCard(
+            // ── v12 Daily Reward strip
+            StaggeredItem(index: 0, child: _DailyRewardStrip()),
+            const SizedBox(height: 10),
+            StaggeredItem(index: 1, child: GlassCard(
+              padding: const EdgeInsets.all(14),
+              onTap: () => pushPage(context, const RewardsCenterScreen()),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Row(children: [
+                  Icon(Icons.card_giftcard_rounded, color: st.accent, size: 22),
+                  const SizedBox(width: 8),
+                  const Text('مركز المكافآت',
+                    style: TextStyle(fontFamily: 'Cairo', fontSize: 15, fontWeight: FontWeight.w800)),
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFC107).withValues(alpha: 0.18),
+                      borderRadius: BorderRadius.circular(9)),
+                    child: Text('${st.spendableXp} XP',
+                      style: const TextStyle(fontFamily: 'Cairo', fontSize: 11,
+                        fontWeight: FontWeight.w800, color: Color(0xFFFFA000))),
+                  ),
+                ]),
+                const SizedBox(height: 12),
+                Row(children: [
+                  Expanded(child: _RewardPill(icon: Icons.casino_rounded, label: 'لفة الحظ',
+                    value: '${st.spinTokens}', color: const Color(0xFF9C27B0))),
+                  const SizedBox(width: 8),
+                  Expanded(child: _RewardPill(icon: Icons.shield_rounded, label: 'دروع',
+                    value: '${st.streakShields}', color: const Color(0xFF26A69A))),
+                  const SizedBox(width: 8),
+                  Expanded(child: _RewardPill(icon: Icons.local_fire_department_rounded, label: 'مكافأة',
+                    value: st.canClaimDailyReward ? 'جاهزة' : 'اليوم ${st.dailyRewardDay}/7',
+                    color: const Color(0xFFEC407A))),
+                ]),
+              ]),
+            )),
+            const SizedBox(height: 10),
+            StaggeredItem(index: 2, child: GlassCard(
               padding: const EdgeInsets.all(14),
               onTap: () => pushPage(context, const AchievementsScreen()),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -7229,7 +7703,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ]),
             )),
             const SizedBox(height: 14),
-            StaggeredItem(index: 1, child: GlassCard(
+            StaggeredItem(index: 3, child: GlassCard(
               radius: 28, padding: const EdgeInsets.all(20),
               gradient: LinearGradient(begin: Alignment.topRight, end: Alignment.bottomLeft,
                 colors: [st.accent, Color.lerp(st.accent, character.color, 0.65)!]),
@@ -7263,6 +7737,18 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(height: 90, child: ListView(
               scrollDirection: Axis.horizontal, reverse: true,
               children: [
+                _QuickAction(icon: Icons.card_giftcard_rounded, label: 'مكافآت', color: const Color(0xFFEC407A),
+                  onTap: () => pushPage(context, const RewardsCenterScreen())),
+                const SizedBox(width: 10),
+                _QuickAction(icon: Icons.casino_rounded, label: 'لفة', color: const Color(0xFF9C27B0),
+                  onTap: () => pushPage(context, const SpinWheelScreen())),
+                const SizedBox(width: 10),
+                _QuickAction(icon: Icons.widgets_rounded, label: 'ويدجت', color: const Color(0xFF5B8DEF),
+                  onTap: () => pushPage(context, const WidgetsCenterScreen())),
+                const SizedBox(width: 10),
+                _QuickAction(icon: Icons.redeem_rounded, label: 'كود هدية', color: const Color(0xFF26C6DA),
+                  onTap: () => pushPage(context, const GiftCodeScreen())),
+                const SizedBox(width: 10),
                 _QuickAction(icon: Icons.edit_note_rounded, label: 'ملاحظة', color: const Color(0xFFFFA726),
                   onTap: () => pushPage(context, const JooNotesScreen())),
                 const SizedBox(width: 10),
@@ -7382,6 +7868,78 @@ class _HomeScreenState extends State<HomeScreen> {
           ]),
         );
       },
+    );
+  }
+}
+
+class _DailyRewardStrip extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final st = AppState.I;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final canClaim = st.canClaimDailyReward;
+    return GlassCard(
+      onTap: () => pushPage(context, const DailyRewardScreen()),
+      gradient: canClaim
+          ? LinearGradient(colors: [
+              const Color(0xFFEC407A),
+              Color.lerp(const Color(0xFFEC407A), const Color(0xFFFFC107), 0.6)!,
+            ], begin: Alignment.topRight, end: Alignment.bottomLeft)
+          : null,
+      padding: const EdgeInsets.all(14),
+      child: Row(children: [
+        Container(
+          width: 48, height: 48,
+          decoration: BoxDecoration(
+            color: canClaim ? Colors.white.withValues(alpha: 0.22) : st.accent.withValues(alpha: 0.14),
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(color: canClaim ? Colors.white.withValues(alpha: 0.4) : st.accent.withValues(alpha: 0.4), width: 1.3),
+          ),
+          child: Icon(canClaim ? Icons.card_giftcard_rounded : Icons.check_circle_rounded,
+            color: canClaim ? Colors.white : st.accent, size: 24),
+        ),
+        const SizedBox(width: 12),
+        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(canClaim ? 'مكافأة اليوم جاهزة!' : 'مكافأتك اليومية اتستلمت',
+            style: TextStyle(fontFamily: 'Cairo',
+              fontSize: 14, fontWeight: FontWeight.w800,
+              color: canClaim ? Colors.white : null)),
+          const SizedBox(height: 3),
+          Text(canClaim ? 'اضغط لاستلام مكافأة اليوم ${(st.dailyRewardDay % 7) + 1}'
+              : 'يومك ${st.dailyRewardDay}/7 — ارجع بكرة',
+            style: TextStyle(fontFamily: 'Cairo', fontSize: 11.5,
+              color: canClaim ? Colors.white.withValues(alpha: 0.9) : (isDark ? Colors.white54 : Colors.black45))),
+        ])),
+        Icon(Icons.chevron_left_rounded,
+          color: canClaim ? Colors.white : (isDark ? Colors.white30 : Colors.black26)),
+      ]),
+    );
+  }
+}
+
+class _RewardPill extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color color;
+  const _RewardPill({required this.icon, required this.label, required this.value, required this.color});
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 1.1),
+      ),
+      child: Column(children: [
+        Icon(icon, size: 16, color: color),
+        const SizedBox(height: 4),
+        Text(value, style: TextStyle(fontFamily: 'Cairo', fontSize: 12, fontWeight: FontWeight.w800, color: color)),
+        Text(label, style: TextStyle(fontFamily: 'Cairo', fontSize: 9.5,
+          color: isDark ? Colors.white54 : Colors.black54)),
+      ]),
     );
   }
 }
@@ -8028,6 +8586,978 @@ class _PickerTile extends StatelessWidget {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+//  v12 — Rewards Center / Spin Wheel / Daily Reward / Gift Code / Widgets
+// ═══════════════════════════════════════════════════════════════════════════
+
+class RewardsCenterScreen extends StatelessWidget {
+  const RewardsCenterScreen({super.key});
+  @override
+  Widget build(BuildContext context) {
+    final st = AppState.I;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return GradientScaffold(
+      title: 'مركز المكافآت',
+      child: ListenableBuilder(
+        listenable: st,
+        builder: (context, _) => ListView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
+          children: [
+            // Balance card
+            GlassCard(
+              gradient: LinearGradient(
+                colors: [const Color(0xFFFFC107), Color.lerp(const Color(0xFFFFC107), const Color(0xFFEC407A), 0.55)!],
+                begin: Alignment.topRight, end: Alignment.bottomLeft,
+              ),
+              padding: const EdgeInsets.all(22),
+              child: Column(children: [
+                Row(children: [
+                  const Icon(Icons.card_giftcard_rounded, color: Colors.white, size: 44),
+                  const SizedBox(width: 14),
+                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    const Text('نقاطك القابلة للصرف', style: TextStyle(fontFamily: 'Cairo', color: Colors.white, fontSize: 13)),
+                    Text('${st.spendableXp} XP',
+                      style: const TextStyle(fontFamily: 'Cairo', color: Colors.white, fontSize: 32, fontWeight: FontWeight.w800)),
+                    Text('الإجمالي: ${st.totalXp} XP', style: TextStyle(fontFamily: 'Cairo',
+                      color: Colors.white.withValues(alpha: 0.9), fontSize: 11)),
+                  ])),
+                ]),
+                if (st.hasXpBoost) ...[
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.22),
+                      borderRadius: BorderRadius.circular(12)),
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      const Icon(Icons.bolt_rounded, size: 15, color: Colors.white),
+                      const SizedBox(width: 6),
+                      const Text('XP مضاعف ×2 نشط', style: TextStyle(fontFamily: 'Cairo',
+                        color: Colors.white, fontSize: 12, fontWeight: FontWeight.w800)),
+                    ]),
+                  ),
+                ],
+              ]),
+            ),
+            const SizedBox(height: 12),
+            // Quick reward actions grid
+            GridView.count(
+              crossAxisCount: 2, shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),
+              crossAxisSpacing: 10, mainAxisSpacing: 10, childAspectRatio: 1.35,
+              children: [
+                _RewardAction(
+                  icon: Icons.card_giftcard_rounded,
+                  title: 'مكافأة اليوم',
+                  subtitle: st.canClaimDailyReward ? 'جاهزة الآن!' : 'اليوم ${st.dailyRewardDay}/7',
+                  color: const Color(0xFFEC407A),
+                  pulse: st.canClaimDailyReward,
+                  onTap: () => pushPage(context, const DailyRewardScreen()),
+                ),
+                _RewardAction(
+                  icon: Icons.casino_rounded,
+                  title: 'عجلة الحظ',
+                  subtitle: st.spinTokens > 0 ? '${st.spinTokens} لفة متاحة' : 'شاهد إعلان للفة',
+                  color: const Color(0xFF9C27B0),
+                  onTap: () => pushPage(context, const SpinWheelScreen()),
+                ),
+                _RewardAction(
+                  icon: Icons.redeem_rounded,
+                  title: 'كود هدية',
+                  subtitle: '${st.giftCodesUsed} مستخدم',
+                  color: const Color(0xFF26C6DA),
+                  onTap: () => pushPage(context, const GiftCodeScreen()),
+                ),
+                _RewardAction(
+                  icon: Icons.widgets_rounded,
+                  title: 'الويدجت',
+                  subtitle: 'أضف للشاشة',
+                  color: const Color(0xFF5B8DEF),
+                  onTap: () => pushPage(context, const WidgetsCenterScreen()),
+                ),
+              ],
+            ),
+            const SectionTitle(title: 'الإحصائيات', icon: Icons.insights_rounded),
+            Row(children: [
+              Expanded(child: _StatChip(
+                icon: Icons.casino_rounded,
+                label: 'لفات',
+                value: '${st.spinCount}',
+                color: const Color(0xFF9C27B0),
+              )),
+              const SizedBox(width: 8),
+              Expanded(child: _StatChip(
+                icon: Icons.shield_rounded,
+                label: 'دروع',
+                value: '${st.streakShields}',
+                color: const Color(0xFF26A69A),
+              )),
+              const SizedBox(width: 8),
+              Expanded(child: _StatChip(
+                icon: Icons.local_fire_department_rounded,
+                label: 'أيام',
+                value: '${st.dailyRewardDay}',
+                color: const Color(0xFFEF5350),
+              )),
+            ]),
+            const SectionTitle(title: 'الإعلانات بمكافأة', icon: Icons.play_circle_fill_rounded),
+            GlassCard(
+              gradient: LinearGradient(
+                colors: [st.accent, Color.lerp(st.accent, const Color(0xFFEC407A), 0.5)!],
+                begin: Alignment.topRight, end: Alignment.bottomLeft,
+              ),
+              child: Column(children: [
+                Row(children: [
+                  const Icon(Icons.play_circle_fill_rounded, color: Colors.white, size: 42),
+                  const SizedBox(width: 14),
+                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    const Text('شاهد إعلان واكسب +50 XP', style: TextStyle(fontFamily: 'Cairo',
+                      color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
+                    const SizedBox(height: 4),
+                    Text('متبقي اليوم: ${AdManager.I.rewardedRemainingToday} من 15',
+                      style: TextStyle(fontFamily: 'Cairo',
+                        color: Colors.white.withValues(alpha: 0.9), fontSize: 11.5)),
+                  ])),
+                ]),
+                const SizedBox(height: 14),
+                PrimaryButton(
+                  label: AdManager.I.canWatchRewarded ? 'شاهد الإعلان الآن' : 'جاري التحميل...',
+                  icon: Icons.play_arrow_rounded,
+                  color: Colors.white,
+                  onTap: () => _watchRewarded(context),
+                ),
+              ]),
+            ),
+            const SectionTitle(title: 'متجر المكافآت', icon: Icons.store_rounded),
+            ...kRewards.asMap().entries.map((entry) {
+              final r = entry.value;
+              final owned = st.unlockedRewards.contains(r.id) && r.oneTime;
+              final affordable = st.spendableXp >= r.cost;
+              return Padding(padding: const EdgeInsets.only(bottom: 8),
+                child: StaggeredItem(index: entry.key, child: GlassCard(
+                  padding: const EdgeInsets.all(14), radius: 18,
+                  child: Row(children: [
+                    Container(width: 50, height: 50,
+                      decoration: BoxDecoration(color: r.color.withValues(alpha: 0.16),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: r.color.withValues(alpha: 0.35), width: 1.2)),
+                      child: Icon(r.icon, color: r.color, size: 24)),
+                    const SizedBox(width: 12),
+                    Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(r.title, style: const TextStyle(fontFamily: 'Cairo', fontSize: 13.5, fontWeight: FontWeight.w800)),
+                      const SizedBox(height: 3),
+                      Text(r.description, style: TextStyle(fontFamily: 'Cairo', fontSize: 11,
+                        color: isDark ? Colors.white60 : Colors.black54, height: 1.4)),
+                    ])),
+                    const SizedBox(width: 8),
+                    if (owned)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(color: const Color(0xFF66BB6A).withValues(alpha: 0.16),
+                          borderRadius: BorderRadius.circular(11)),
+                        child: const Text('مملوك', style: TextStyle(fontFamily: 'Cairo',
+                          fontSize: 11, fontWeight: FontWeight.w800, color: Color(0xFF66BB6A))),
+                      )
+                    else
+                      Pressable(
+                        onTap: () async {
+                          haptic(HapticType.medium);
+                          final ok = await st.purchaseReward(r);
+                          if (!context.mounted) return;
+                          if (ok) {
+                            toast(context, 'اتفتح! ${r.title}');
+                            if (r.id == 'themepack1') st.setThemePalette('ocean');
+                            if (r.id == 'themepack2') st.setThemePalette('space');
+                            if (r.id == 'themepack3') st.setThemePalette('fire');
+                          } else {
+                            toast(context, affordable ? 'حصلت مشكلة' : 'محتاج XP أكتر');
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: affordable ? r.color : r.color.withValues(alpha: 0.3),
+                            borderRadius: BorderRadius.circular(11),
+                          ),
+                          child: Text('${r.cost} XP', style: const TextStyle(fontFamily: 'Cairo',
+                            fontSize: 11.5, fontWeight: FontWeight.w800, color: Colors.white)),
+                        ),
+                      ),
+                  ]),
+                )),
+              );
+            }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static Future<void> _watchRewarded(BuildContext context) async {
+    final st = AppState.I;
+    final result = await AdManager.I.showRewarded(onReward: () async {
+      await st.addXp(50);
+      await st.incrementAdRewards();
+      if (!context.mounted) return;
+      toast(context, '+50 XP 🎉');
+    });
+    if (!context.mounted) return;
+    switch (result) {
+      case RewardedShowResult.shown:
+        break;
+      case RewardedShowResult.dailyLimitReached:
+        toast(context, 'وصلت الحد اليومي (15 إعلان)');
+        break;
+      case RewardedShowResult.cooldown:
+        final left = AdManager.I.rewardedCooldownLeft.inSeconds;
+        toast(context, 'استنى $left ثانية');
+        break;
+      case RewardedShowResult.notReady:
+        toast(context, 'الإعلان بيحمل... جرب تاني بعد ثواني');
+        break;
+      case RewardedShowResult.notInitialized:
+        toast(context, 'الإعلانات مش جاهزة');
+        break;
+    }
+  }
+}
+
+class _RewardAction extends StatelessWidget {
+  final IconData icon;
+  final String title, subtitle;
+  final Color color;
+  final VoidCallback onTap;
+  final bool pulse;
+  const _RewardAction({
+    required this.icon, required this.title, required this.subtitle,
+    required this.color, required this.onTap, this.pulse = false,
+  });
+  @override
+  Widget build(BuildContext context) {
+    return GlassCard(
+      onTap: onTap,
+      padding: const EdgeInsets.all(14), radius: 20,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Stack(children: [
+          Container(width: 44, height: 44,
+            decoration: BoxDecoration(color: color.withValues(alpha: 0.18),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: color.withValues(alpha: 0.4), width: 1.2)),
+            child: Icon(icon, color: color, size: 22)),
+          if (pulse)
+            Positioned(top: 0, right: 0, child: PulseDot(color: color, size: 10)),
+        ]),
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(title, style: const TextStyle(fontFamily: 'Cairo', fontSize: 13, fontWeight: FontWeight.w800)),
+          const SizedBox(height: 2),
+          Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontFamily: 'Cairo', fontSize: 10, color: color, fontWeight: FontWeight.w800)),
+        ]),
+      ]),
+    );
+  }
+}
+
+class _StatChip extends StatelessWidget {
+  final IconData icon;
+  final String label, value;
+  final Color color;
+  const _StatChip({required this.icon, required this.label, required this.value, required this.color});
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 1.2),
+      ),
+      child: Column(children: [
+        Icon(icon, color: color, size: 20),
+        const SizedBox(height: 6),
+        Text(value, style: TextStyle(fontFamily: 'Cairo', fontSize: 16,
+          fontWeight: FontWeight.w800, color: color)),
+        Text(label, style: TextStyle(fontFamily: 'Cairo', fontSize: 10.5,
+          color: isDark ? Colors.white54 : Colors.black54)),
+      ]),
+    );
+  }
+}
+
+// ─── Daily Reward Screen ───────────────────────────────────────────────
+
+class DailyRewardScreen extends StatefulWidget {
+  const DailyRewardScreen({super.key});
+  @override
+  State<DailyRewardScreen> createState() => _DailyRewardScreenState();
+}
+
+class _DailyRewardScreenState extends State<DailyRewardScreen> {
+  bool _claiming = false;
+
+  Future<void> _claim() async {
+    if (_claiming) return;
+    setState(() => _claiming = true);
+    haptic(HapticType.medium);
+    final xp = await AppState.I.claimDailyReward();
+    if (!mounted) return;
+    setState(() => _claiming = false);
+    if (xp > 0) {
+      _showRewardDialog(xp);
+    } else {
+      toast(context, 'اتستلمت مكافأة اليوم بالفعل');
+    }
+  }
+
+  void _showRewardDialog(int xp) {
+    showDialog<void>(context: context, builder: (_) => AlertDialog(
+      title: const Text('🎁 مبروك!', textAlign: TextAlign.center,
+        style: TextStyle(fontFamily: 'Cairo', fontSize: 22, fontWeight: FontWeight.w800)),
+      content: Column(mainAxisSize: MainAxisSize.min, children: [
+        const SizedBox(height: 8),
+        const Icon(Icons.emoji_events_rounded, size: 72, color: Color(0xFFFFC107)),
+        const SizedBox(height: 16),
+        Text('+$xp XP', style: const TextStyle(fontFamily: 'Cairo',
+          fontSize: 32, fontWeight: FontWeight.w800, color: Color(0xFFFFA000))),
+        const SizedBox(height: 8),
+        const Text('كمّل 7 أيام عشان تفتح الجاكبوت!',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontFamily: 'Cairo', fontSize: 13, height: 1.7)),
+      ]),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context),
+          child: const Text('تم', style: TextStyle(fontFamily: 'Cairo', fontSize: 15, fontWeight: FontWeight.w800))),
+      ],
+    ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final st = AppState.I;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return GradientScaffold(
+      title: 'المكافأة اليومية',
+      child: ListenableBuilder(
+        listenable: st,
+        builder: (context, _) => ListView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
+          children: [
+            GlassCard(
+              gradient: LinearGradient(
+                colors: [const Color(0xFFEC407A), Color.lerp(const Color(0xFFEC407A), const Color(0xFFFFC107), 0.6)!],
+                begin: Alignment.topRight, end: Alignment.bottomLeft,
+              ),
+              padding: const EdgeInsets.all(24),
+              child: Column(children: [
+                const Icon(Icons.card_giftcard_rounded, color: Colors.white, size: 56),
+                const SizedBox(height: 14),
+                Text('يوم ${(st.dailyRewardDay % 7) + 1} من 7',
+                  style: const TextStyle(fontFamily: 'Cairo', color: Colors.white,
+                    fontSize: 22, fontWeight: FontWeight.w800)),
+                const SizedBox(height: 6),
+                Text(st.canClaimDailyReward ? 'مكافأتك جاهزة للاستلام' : 'اتستلمت — ارجع بكرة',
+                  style: TextStyle(fontFamily: 'Cairo',
+                    color: Colors.white.withValues(alpha: 0.92), fontSize: 13)),
+                const SizedBox(height: 18),
+                PrimaryButton(
+                  label: _claiming ? 'جاري...' : (st.canClaimDailyReward ? 'استلم المكافأة' : 'اتستلمت'),
+                  icon: st.canClaimDailyReward ? Icons.redeem_rounded : Icons.check_circle_rounded,
+                  color: Colors.white,
+                  onTap: st.canClaimDailyReward ? _claim : null,
+                ),
+              ]),
+            ),
+            const SectionTitle(title: 'جدول المكافآت', icon: Icons.calendar_view_week_rounded),
+            ...kDailyRewards.map((r) {
+              final done = r.day <= st.dailyRewardDay && st.lastDailyRewardClaimDate == todayKey();
+              final current = !done && r.day == (st.dailyRewardDay % 7) + 1;
+              return Padding(padding: const EdgeInsets.only(bottom: 8),
+                child: GlassCard(
+                  padding: const EdgeInsets.all(14), radius: 18,
+                  tint: current
+                    ? r.color.withValues(alpha: isDark ? 0.22 : 0.12)
+                    : null,
+                  child: Row(children: [
+                    Container(width: 48, height: 48,
+                      decoration: BoxDecoration(
+                        color: done ? const Color(0xFF66BB6A) : r.color.withValues(alpha: 0.18),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: (done ? const Color(0xFF66BB6A) : r.color).withValues(alpha: 0.5), width: 1.3),
+                      ),
+                      child: Icon(done ? Icons.check_rounded : r.icon,
+                        color: done ? Colors.white : r.color, size: 22)),
+                    const SizedBox(width: 12),
+                    Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text('اليوم ${r.day} — ${r.label}',
+                        style: const TextStyle(fontFamily: 'Cairo', fontSize: 13.5, fontWeight: FontWeight.w800)),
+                      if (r.unlock != null)
+                        Text('يفتح: ${r.unlock}', style: TextStyle(fontFamily: 'Cairo', fontSize: 10.5,
+                          color: isDark ? Colors.white54 : Colors.black45)),
+                    ])),
+                    Text('+${r.xp} XP', style: TextStyle(fontFamily: 'Cairo',
+                      fontSize: 13, fontWeight: FontWeight.w800, color: r.color)),
+                    if (current) ...[
+                      const SizedBox(width: 8),
+                      PulseDot(color: r.color, size: 10),
+                    ],
+                  ]),
+                ));
+            }),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Spin Wheel Screen ──────────────────────────────────────────────────
+
+class SpinWheelScreen extends StatefulWidget {
+  const SpinWheelScreen({super.key});
+  @override
+  State<SpinWheelScreen> createState() => _SpinWheelScreenState();
+}
+
+class _SpinWheelScreenState extends State<SpinWheelScreen> with SingleTickerProviderStateMixin {
+  late AnimationController _ctrl;
+  double _currentAngle = 0;
+  bool _spinning = false;
+  SpinPrize? _result;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(vsync: this, duration: const Duration(seconds: 4));
+  }
+
+  @override
+  void dispose() { _ctrl.dispose(); super.dispose(); }
+
+  Future<void> _spin({required bool useToken}) async {
+    if (_spinning) return;
+    haptic(HapticType.medium);
+    setState(() { _spinning = true; _result = null; });
+    final prize = await AppState.I.spinWheel(useToken: useToken);
+    if (prize == null) {
+      if (!mounted) return;
+      setState(() => _spinning = false);
+      toast(context, useToken ? 'مفيش لفات متاحة' : 'حصلت مشكلة');
+      return;
+    }
+    // Find index
+    final idx = kSpinPrizes.indexOf(prize);
+    final arc = (2 * math.pi) / kSpinPrizes.length;
+    // Target angle so that prize aligns with pointer (top)
+    final target = -(idx * arc) - arc / 2 + (math.Random().nextDouble() - 0.5) * arc * 0.4;
+    final fullSpins = 4 + math.Random().nextInt(3);
+    final finalAngle = _currentAngle + (2 * math.pi * fullSpins) + target;
+    final begin = _currentAngle;
+    final tween = Tween<double>(begin: begin, end: finalAngle);
+    _ctrl.reset();
+    _ctrl.duration = const Duration(milliseconds: 4200);
+    final anim = tween.animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic));
+    anim.addListener(() {
+      if (mounted) setState(() => _currentAngle = anim.value);
+    });
+    await _ctrl.forward();
+    if (!mounted) return;
+    _currentAngle = finalAngle % (2 * math.pi);
+    setState(() { _spinning = false; _result = prize; });
+    haptic(HapticType.heavy);
+    _showResult(prize);
+  }
+
+  void _showResult(SpinPrize prize) {
+    showDialog<void>(context: context, builder: (_) => AlertDialog(
+      title: Text('🎉 ${prize.label}', textAlign: TextAlign.center,
+        style: const TextStyle(fontFamily: 'Cairo', fontSize: 20, fontWeight: FontWeight.w800)),
+      content: Column(mainAxisSize: MainAxisSize.min, children: [
+        const SizedBox(height: 8),
+        Icon(prize.unlock == 'streak_shield' ? Icons.shield_rounded
+          : prize.unlock == 'xp_boost_2h' ? Icons.bolt_rounded
+          : Icons.emoji_events_rounded, size: 72, color: prize.color),
+        const SizedBox(height: 14),
+        if (prize.xp > 0)
+          Text('+${prize.xp} XP', style: TextStyle(fontFamily: 'Cairo',
+            fontSize: 26, fontWeight: FontWeight.w800, color: prize.color)),
+        if (prize.unlock != null) ...[
+          const SizedBox(height: 8),
+          Text(prize.unlock == 'streak_shield' ? 'درع سلسلة جديد!' : 'XP مضاعف ×2 لمدة ساعتين!',
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontFamily: 'Cairo', fontSize: 13, height: 1.6)),
+        ],
+      ]),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context),
+          child: const Text('تمام', style: TextStyle(fontFamily: 'Cairo', fontSize: 15, fontWeight: FontWeight.w800))),
+      ],
+    ));
+  }
+
+  Future<void> _watchAdForSpin() async {
+    final st = AppState.I;
+    final result = await AdManager.I.showRewarded(onReward: () async {
+      st.spinTokens += 1;
+      await Store.setInt('spinTokens', st.spinTokens);
+      st.notifyListeners();
+      if (!context.mounted) return;
+      toast(context, '+1 لفة 🎡');
+    });
+    if (!context.mounted) return;
+    switch (result) {
+      case RewardedShowResult.shown: break;
+      case RewardedShowResult.dailyLimitReached: toast(context, 'وصلت الحد اليومي');
+      case RewardedShowResult.cooldown: toast(context, 'استنى ${AdManager.I.rewardedCooldownLeft.inSeconds} ث');
+      case RewardedShowResult.notReady: toast(context, 'الإعلان بيحمل...');
+      case RewardedShowResult.notInitialized: toast(context, 'الإعلانات مش جاهزة');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final st = AppState.I;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return GradientScaffold(
+      title: 'عجلة الحظ',
+      child: ListenableBuilder(
+        listenable: st,
+        builder: (context, _) => ListView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
+          children: [
+            GlassCard(
+              padding: const EdgeInsets.all(20),
+              gradient: LinearGradient(
+                colors: [const Color(0xFF9C27B0), Color.lerp(const Color(0xFF9C27B0), const Color(0xFF5B8DEF), 0.55)!],
+                begin: Alignment.topRight, end: Alignment.bottomLeft,
+              ),
+              child: Row(children: [
+                const Icon(Icons.casino_rounded, color: Colors.white, size: 44),
+                const SizedBox(width: 14),
+                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  const Text('لفّ واكسب', style: TextStyle(fontFamily: 'Cairo',
+                    color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
+                  Text('${st.spinTokens} لفة متاحة',
+                    style: TextStyle(fontFamily: 'Cairo',
+                      color: Colors.white.withValues(alpha: 0.9), fontSize: 12)),
+                ])),
+              ]),
+            ),
+            const SizedBox(height: 22),
+            Center(child: SizedBox(
+              width: 320, height: 320,
+              child: Stack(alignment: Alignment.center, children: [
+                // Wheel
+                Transform.rotate(
+                  angle: _currentAngle,
+                  child: CustomPaint(
+                    size: const Size(300, 300),
+                    painter: _WheelPainter(kSpinPrizes),
+                  ),
+                ),
+                // Pointer
+                Positioned(top: -2, child: Container(
+                  width: 0, height: 0,
+                  decoration: const BoxDecoration(),
+                  child: const Icon(Icons.arrow_drop_down_rounded,
+                    size: 56, color: Color(0xFFFFC107)),
+                )),
+                // Center button
+                GestureDetector(
+                  onTap: (_spinning || st.spinTokens <= 0) ? null : () => _spin(useToken: true),
+                  child: Container(
+                    width: 80, height: 80,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(colors: [
+                        _spinning ? Colors.grey : st.accent,
+                        Color.lerp(_spinning ? Colors.grey : st.accent, Colors.black, 0.3)!,
+                      ]),
+                      boxShadow: [BoxShadow(color: st.accent.withValues(alpha: 0.5),
+                        blurRadius: 20, offset: const Offset(0, 6))],
+                      border: Border.all(color: Colors.white, width: 3),
+                    ),
+                    child: Center(child: Text(
+                      _spinning ? '...' : (st.spinTokens > 0 ? 'لف' : '—'),
+                      style: const TextStyle(fontFamily: 'Cairo', color: Colors.white,
+                        fontSize: 20, fontWeight: FontWeight.w800),
+                    )),
+                  ),
+                ),
+              ]),
+            )),
+            const SizedBox(height: 20),
+            if (_result != null)
+              GlassCard(
+                tint: _result!.color.withValues(alpha: isDark ? 0.25 : 0.15),
+                child: Row(children: [
+                  Icon(Icons.emoji_events_rounded, color: _result!.color, size: 32),
+                  const SizedBox(width: 12),
+                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    const Text('آخر نتيجة', style: TextStyle(fontFamily: 'Cairo', fontSize: 12)),
+                    Text(_result!.label, style: TextStyle(fontFamily: 'Cairo',
+                      fontSize: 18, fontWeight: FontWeight.w800, color: _result!.color)),
+                  ])),
+                ]),
+              ),
+            const SizedBox(height: 12),
+            PrimaryButton(
+              label: st.spinTokens > 0 ? 'لف العجلة' : 'مفيش لفات',
+              icon: Icons.casino_rounded,
+              onTap: (st.spinTokens > 0 && !_spinning) ? () => _spin(useToken: true) : null,
+            ),
+            const SizedBox(height: 10),
+            GhostButton(
+              label: 'شاهد إعلان → لفة مجانية',
+              icon: Icons.play_circle_fill_rounded,
+              onTap: _watchAdForSpin,
+            ),
+            const SizedBox(height: 10),
+            GhostButton(
+              label: 'اشتري لفة بـ 150 XP',
+              icon: Icons.shopping_cart_rounded,
+              onTap: () async {
+                final reward = kRewards.firstWhere((r) => r.id == 'free_spin');
+                final ok = await st.purchaseReward(reward);
+                if (!mounted) return;
+                toast(context, ok ? 'اتضافت لفة!' : 'محتاج XP أكتر');
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _WheelPainter extends CustomPainter {
+  final List<SpinPrize> prizes;
+  _WheelPainter(this.prizes);
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = size.center(Offset.zero);
+    final radius = size.width / 2;
+    final arc = (2 * math.pi) / prizes.length;
+    for (int i = 0; i < prizes.length; i++) {
+      final start = i * arc - math.pi / 2;
+      final p = Paint()..color = prizes[i].color;
+      canvas.drawArc(Rect.fromCircle(center: center, radius: radius), start, arc, true, p);
+      // Label
+      final textAngle = start + arc / 2;
+      final labelR = radius * 0.62;
+      final lx = center.dx + labelR * math.cos(textAngle);
+      final ly = center.dy + labelR * math.sin(textAngle);
+      final tp = TextPainter(
+        text: TextSpan(
+          text: prizes[i].label.replaceAll('XP', '\nXP'),
+          style: const TextStyle(color: Colors.white, fontSize: 12,
+            fontWeight: FontWeight.w800, fontFamily: 'Cairo', height: 1.1),
+        ),
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.rtl,
+      )..layout();
+      tp.paint(canvas, Offset(lx - tp.width / 2, ly - tp.height / 2));
+    }
+    // Outer border
+    canvas.drawCircle(center, radius, Paint()
+      ..style = PaintingStyle.stroke..strokeWidth = 6..color = Colors.white.withValues(alpha: 0.4));
+    canvas.drawCircle(center, radius - 3, Paint()
+      ..style = PaintingStyle.stroke..strokeWidth = 2..color = const Color(0xFFFFC107));
+  }
+  @override
+  bool shouldRepaint(covariant _WheelPainter old) => false;
+}
+
+// ─── Gift Code Screen ──────────────────────────────────────────────────
+
+class GiftCodeScreen extends StatefulWidget {
+  const GiftCodeScreen({super.key});
+  @override
+  State<GiftCodeScreen> createState() => _GiftCodeScreenState();
+}
+
+class _GiftCodeScreenState extends State<GiftCodeScreen> {
+  final _ctrl = TextEditingController();
+  bool _submitting = false;
+
+  @override
+  void dispose() { _ctrl.dispose(); super.dispose(); }
+
+  Future<void> _redeem() async {
+    if (_submitting) return;
+    final code = _ctrl.text.trim();
+    if (code.isEmpty) { toast(context, 'اكتب كود'); return; }
+    setState(() => _submitting = true);
+    haptic(HapticType.medium);
+    final result = await AppState.I.redeemGiftCode(code);
+    if (!mounted) return;
+    setState(() => _submitting = false);
+    if (result == null) {
+      toast(context, 'كود غلط أو مستخدم قبل كده');
+      return;
+    }
+    _ctrl.clear();
+    _showSuccess(result);
+  }
+
+  void _showSuccess(GiftCode code) {
+    showDialog<void>(context: context, builder: (_) => AlertDialog(
+      title: const Text('✅ تم تفعيل الكود', textAlign: TextAlign.center,
+        style: TextStyle(fontFamily: 'Cairo', fontSize: 20, fontWeight: FontWeight.w800)),
+      content: Column(mainAxisSize: MainAxisSize.min, children: [
+        const SizedBox(height: 8),
+        const Icon(Icons.redeem_rounded, size: 72, color: Color(0xFF26C6DA)),
+        const SizedBox(height: 14),
+        if (code.xp > 0)
+          Text('+${code.xp} XP', style: const TextStyle(fontFamily: 'Cairo',
+            fontSize: 30, fontWeight: FontWeight.w800, color: Color(0xFFFFA000))),
+        if (code.unlock != null) ...[
+          const SizedBox(height: 8),
+          Text('مكافأة إضافية: ${code.unlock}',
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontFamily: 'Cairo', fontSize: 13, height: 1.6)),
+        ],
+      ]),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context),
+          child: const TextStyle(fontFamily: 'Cairo').isEmpty
+            ? const Text('تم')
+            : const Text('تم', style: TextStyle(fontFamily: 'Cairo', fontSize: 15, fontWeight: FontWeight.w800))),
+      ],
+    ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final st = AppState.I;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return GradientScaffold(
+      title: 'كود هدية',
+      child: ListenableBuilder(
+        listenable: st,
+        builder: (context, _) => ListView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
+          children: [
+            GlassCard(
+              gradient: LinearGradient(
+                colors: [const Color(0xFF26C6DA), Color.lerp(const Color(0xFF26C6DA), const Color(0xFF5B8DEF), 0.55)!],
+                begin: Alignment.topRight, end: Alignment.bottomLeft,
+              ),
+              padding: const EdgeInsets.all(22),
+              child: Column(children: [
+                const Icon(Icons.redeem_rounded, color: Colors.white, size: 56),
+                const SizedBox(height: 14),
+                const Text('اكتب كودك واستلم مكافأتك',
+                  style: TextStyle(fontFamily: 'Cairo', color: Colors.white,
+                    fontSize: 16, fontWeight: FontWeight.w800)),
+                const SizedBox(height: 6),
+                Text('${st.giftCodesUsed} كود مستخدم',
+                  style: TextStyle(fontFamily: 'Cairo',
+                    color: Colors.white.withValues(alpha: 0.9), fontSize: 12)),
+              ]),
+            ),
+            const SizedBox(height: 16),
+            GlassCard(child: Column(children: [
+              TextField(
+                controller: _ctrl,
+                textCapitalization: TextCapitalization.characters,
+                style: const TextStyle(fontFamily: 'Cairo', fontSize: 16, fontWeight: FontWeight.w800, letterSpacing: 2),
+                onSubmitted: (_) => _redeem(),
+                decoration: const InputDecoration(
+                  hintText: 'RAFEEQY2025',
+                  prefixIcon: Icon(Icons.vpn_key_rounded),
+                ),
+              ),
+              const SizedBox(height: 14),
+              PrimaryButton(
+                label: _submitting ? 'جاري...' : 'تفعيل الكود',
+                icon: Icons.check_rounded,
+                onTap: _submitting ? null : _redeem,
+              ),
+            ])),
+            const SectionTitle(title: 'أكواد متاحة للجميع', icon: Icons.info_outline_rounded),
+            ...kGiftCodes.map((c) {
+              final used = st.redeemedCodes.contains(c.code);
+              return Padding(padding: const EdgeInsets.only(bottom: 8),
+                child: GlassCard(
+                  padding: const EdgeInsets.all(14), radius: 16,
+                  child: Row(children: [
+                    Icon(used ? Icons.check_circle_rounded : Icons.vpn_key_rounded,
+                      color: used ? const Color(0xFF66BB6A) : st.accent, size: 22),
+                    const SizedBox(width: 12),
+                    Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      SelectableText(c.code, style: const TextStyle(fontFamily: 'Cairo',
+                        fontSize: 15, fontWeight: FontWeight.w800, letterSpacing: 1.5)),
+                      Text('+${c.xp} XP${c.unlock != null ? " • ${c.unlock}" : ""}',
+                        style: TextStyle(fontFamily: 'Cairo', fontSize: 11,
+                          color: isDark ? Colors.white54 : Colors.black45)),
+                    ])),
+                    if (!used)
+                      IconButton(
+                        icon: Icon(Icons.copy_rounded, color: st.accent, size: 20),
+                        onPressed: () {
+                          _ctrl.text = c.code;
+                          toast(context, 'اتنسخ — اضغط تفعيل');
+                        },
+                      )
+                    else
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF66BB6A).withValues(alpha: 0.16),
+                          borderRadius: BorderRadius.circular(9)),
+                        child: const Text('مستخدم', style: TextStyle(fontFamily: 'Cairo',
+                          fontSize: 11, fontWeight: FontWeight.w800, color: Color(0xFF66BB6A))),
+                      ),
+                  ]),
+                ));
+            }),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Widgets Center ────────────────────────────────────────────────────
+
+class WidgetsCenterScreen extends StatelessWidget {
+  const WidgetsCenterScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final st = AppState.I;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return GradientScaffold(
+      title: 'الويدجت',
+      child: ListenableBuilder(
+        listenable: st,
+        builder: (context, _) => ListView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
+          children: [
+            GlassCard(
+              gradient: LinearGradient(
+                colors: [st.accent, Color.lerp(st.accent, const Color(0xFF7E57C2), 0.6)!],
+                begin: Alignment.topRight, end: Alignment.bottomLeft,
+              ),
+              padding: const EdgeInsets.all(22),
+              child: Row(children: [
+                const Icon(Icons.widgets_rounded, color: Colors.white, size: 48),
+                const SizedBox(width: 14),
+                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  const Text('ويدجت رفيقي',
+                    style: TextStyle(fontFamily: 'Cairo', color: Colors.white,
+                      fontSize: 16, fontWeight: FontWeight.w800)),
+                  const SizedBox(height: 4),
+                  Text('حط مهامك، صلاتك، مكافآتك على الشاشة الرئيسية',
+                    style: TextStyle(fontFamily: 'Cairo',
+                      color: Colors.white.withValues(alpha: 0.9), fontSize: 12, height: 1.5)),
+                ])),
+              ]),
+            ),
+            const SectionTitle(title: 'خطوات الإضافة', icon: Icons.playlist_add_check_rounded),
+            _step(context, '1', 'اضغط مطولاً على شاشة الهاتف', 'هتظهر قائمة الخيارات', Icons.touch_app_rounded),
+            _step(context, '2', 'اختار "الويدجت" أو "Widgets"', 'هتلاقيها في القائمة اللي ظهرت', Icons.widgets_rounded),
+            _step(context, '3', 'دور على "رفيقي"', 'هتلاقي 3 أحجام متاحة', Icons.search_rounded),
+            _step(context, '4', 'اسحب الحجم اللي تحبه للشاشة', 'كدة خلاص، اتضاف ✅', Icons.add_circle_rounded),
+            const SectionTitle(title: 'الأحجام المتاحة', icon: Icons.grid_view_rounded),
+            Row(children: [
+              Expanded(child: _widgetSizeCard(context, 'صغير', Icons.crop_square_rounded, 'المهمة الجاية + الصلاة + مكافأة اليوم')),
+              const SizedBox(width: 10),
+              Expanded(child: _widgetSizeCard(context, 'متوسط', Icons.crop_16_9_rounded, 'المهام + الصلاة + الطقس + البطارية')),
+            ]),
+            const SizedBox(height: 10),
+            _widgetSizeCard(context, 'كبير', Icons.crop_landscape_rounded, 'كل حاجة في ويدجت واحد شامل'),
+            const SectionTitle(title: 'المميزات الحقيقية', icon: Icons.auto_awesome_rounded),
+            GlassCard(child: Column(children: [
+              _feat(context, Icons.check_circle_rounded, 'بيحدّث نفسه كل 5 دقايق'),
+              _feat(context, Icons.check_circle_rounded, 'زرار مهام سريع لإنجاز المهمة'),
+              _feat(context, Icons.check_circle_rounded, 'زرار مياه لزيادة كوب'),
+              _feat(context, Icons.check_circle_rounded, 'بيوريك مكافأة اليوم لما تكون جاهزة'),
+              _feat(context, Icons.check_circle_rounded, 'بيحدّث لما تخلص مهمة أو تشرب مياه'),
+            ])),
+            const SizedBox(height: 14),
+            GlassCard(
+              tint: const Color(0xFFFFC107).withValues(alpha: isDark ? 0.18 : 0.10),
+              child: Row(children: [
+                const Icon(Icons.info_outline_rounded, size: 20, color: Color(0xFFFFA000)),
+                const SizedBox(width: 10),
+                Expanded(child: Text(
+                  'بعد إضافة الويدجت، أي مهمة خلصتها أو مياه شربتها هتظهر فوراً. يحدّث نفسه أوتوماتيك.',
+                  style: TextStyle(fontFamily: 'Cairo', fontSize: 11.5, height: 1.7,
+                    color: isDark ? Colors.white70 : Colors.black87),
+                )),
+              ]),
+            ),
+            const SizedBox(height: 14),
+            PrimaryButton(
+              label: 'حدّث الويدجت الآن',
+              icon: Icons.refresh_rounded,
+              onTap: () async {
+                await st.updateWidgets();
+                await st.incrementWidgetAdd();
+                if (!context.mounted) return;
+                toast(context, 'اتحدّث الويدجت');
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _step(BuildContext context, String n, String title, String sub, IconData icon) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Padding(padding: const EdgeInsets.only(bottom: 8),
+      child: GlassCard(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12), radius: 18,
+        child: Row(children: [
+          Container(width: 40, height: 40,
+            decoration: BoxDecoration(color: AppState.I.accent.withValues(alpha: 0.14),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppState.I.accent.withValues(alpha: 0.3), width: 1.2)),
+            child: Center(child: Text(n, style: TextStyle(fontFamily: 'Cairo',
+              fontSize: 18, fontWeight: FontWeight.w800, color: AppState.I.accent)))),
+          const SizedBox(width: 12),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(title, style: const TextStyle(fontFamily: 'Cairo', fontSize: 13.5, fontWeight: FontWeight.w800)),
+            const SizedBox(height: 2),
+            Text(sub, style: TextStyle(fontFamily: 'Cairo', fontSize: 11,
+              color: isDark ? Colors.white54 : Colors.black54)),
+          ])),
+          Icon(icon, color: AppState.I.accent, size: 22),
+        ]),
+      ));
+  }
+
+  Widget _widgetSizeCard(BuildContext context, String label, IconData icon, String desc) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return GlassCard(padding: const EdgeInsets.all(14), radius: 18,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Icon(icon, color: AppState.I.accent, size: 22),
+        const SizedBox(height: 10),
+        Text(label, style: const TextStyle(fontFamily: 'Cairo', fontSize: 13.5, fontWeight: FontWeight.w800)),
+        const SizedBox(height: 4),
+        Text(desc, style: TextStyle(fontFamily: 'Cairo', fontSize: 10.5, height: 1.5,
+          color: isDark ? Colors.white54 : Colors.black54)),
+      ]),
+    );
+  }
+
+  Widget _feat(BuildContext context, IconData icon, String text) {
+    return Padding(padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(children: [
+        Icon(icon, color: const Color(0xFF66BB6A), size: 17),
+        const SizedBox(width: 10),
+        Expanded(child: Text(text, style: const TextStyle(fontFamily: 'Cairo', fontSize: 12.5))),
+      ]));
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 //  Prayer Screen
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -8467,7 +9997,7 @@ class _MiniBar extends StatelessWidget {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-//  More Screen (reorganized with categories)
+//  More Screen
 // ═══════════════════════════════════════════════════════════════════════════
 
 class _MoreItem {
@@ -8494,6 +10024,16 @@ class MoreScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final categories = <_MoreCategory>[
+      _MoreCategory('⭐ المكافآت والرفيق', Icons.card_giftcard_rounded, const Color(0xFFEC407A), [
+        _MoreItem('مركز المكافآت', 'كل المكافآت في مكان واحد', Icons.card_giftcard_rounded, const Color(0xFFEC407A), () => const RewardsCenterScreen()),
+        _MoreItem('مكافأة اليوم', 'استلم مكافأتك اليومية', Icons.redeem_rounded, const Color(0xFFFFC107), () => const DailyRewardScreen()),
+        _MoreItem('عجلة الحظ', 'لفّ واكسب جوائز', Icons.casino_rounded, const Color(0xFF9C27B0), () => const SpinWheelScreen()),
+        _MoreItem('كود هدية', 'فعّل كود واستلم XP', Icons.vpn_key_rounded, const Color(0xFF26C6DA), () => const GiftCodeScreen()),
+        _MoreItem('رفيقي', 'اختر رفيقك', Icons.pets_rounded, const Color(0xFFFFB74D), () => const CharacterScreen()),
+        _MoreItem('الإنجازات', 'شاراتك', Icons.military_tech_rounded, const Color(0xFFFFC107), () => const AchievementsScreen()),
+        _MoreItem('الويدجت', 'أضف للشاشة', Icons.widgets_rounded, const Color(0xFF5B8DEF), () => const WidgetsCenterScreen()),
+        _MoreItem('الثيمات', 'خصص شكلك', Icons.palette_rounded, const Color(0xFF7E57C2), () => const ThemesScreen()),
+      ]),
       _MoreCategory('الأدوات الذكية', Icons.auto_awesome_rounded, const Color(0xFF7E57C2), [
         _MoreItem('JOO TOOLS', 'كل الأدوات الجديدة', Icons.construction_rounded, const Color(0xFF5B8DEF), () => const JooToolsScreen()),
         _MoreItem('المنبهات', 'منبهات حقيقية', Icons.alarm_rounded, const Color(0xFF8D6E63), () => const AlarmsScreen()),
@@ -8501,12 +10041,6 @@ class MoreScreen extends StatelessWidget {
         _MoreItem('حملة واتساب', 'رسائل جماعية', Icons.campaign_rounded, const Color(0xFF128C7E), () => const WhatsAppBulkScreen()),
         _MoreItem('وضع الاتصال', 'اتصال سريع', Icons.phone_in_talk_rounded, const Color(0xFF43A047), () => const CallModeScreen()),
         _MoreItem('فحص أمان', 'افحص أمان المواقع', Icons.security_rounded, const Color(0xFF26A69A), () => const WebsiteSecurityScreen()),
-      ]),
-      _MoreCategory('الرفيق والمكافآت', Icons.pets_rounded, const Color(0xFFFFB74D), [
-        _MoreItem('رفيقي', 'اختر رفيقك', Icons.pets_rounded, const Color(0xFFFFB74D), () => const CharacterScreen()),
-        _MoreItem('الإنجازات', 'شاراتك', Icons.military_tech_rounded, const Color(0xFFFFC107), () => const AchievementsScreen()),
-        _MoreItem('المكافآت', 'اشتر بحقوق XP', Icons.card_giftcard_rounded, const Color(0xFFEC407A), () => const RewardsScreen()),
-        _MoreItem('الثيمات', 'خصص شكلك', Icons.palette_rounded, const Color(0xFF7E57C2), () => const ThemesScreen()),
       ]),
       _MoreCategory('الإنتاجية', Icons.check_circle_rounded, const Color(0xFF5B8DEF), [
         _MoreItem('المهام', 'كل مهامك', Icons.checklist_rtl_rounded, const Color(0xFF5B8DEF), () => const TasksScreen()),
@@ -8516,6 +10050,7 @@ class MoreScreen extends StatelessWidget {
         _MoreItem('متابع الوقت', 'شغلك', Icons.timer_outlined, const Color(0xFF26C6DA), () => const TimeTrackerScreen()),
         _MoreItem('التقويم', 'شهرك', Icons.calendar_month_rounded, const Color(0xFF5C6BC0), () => const CalendarScreen()),
         _MoreItem('المناسبات', 'عدّاد', Icons.event_rounded, const Color(0xFFEC407A), () => const EventsScreen()),
+        _MoreItem('السجل', 'يومياتك', Icons.book_rounded, const Color(0xFFFFB74D), () => const JournalScreen()),
       ]),
       _MoreCategory('الصحة واللياقة', Icons.favorite_rounded, const Color(0xFFEF5350), [
         _MoreItem('الرياضة', 'تمارينك', Icons.fitness_center_rounded, const Color(0xFFEF5350), () => const WorkoutScreen()),
@@ -8728,17 +10263,17 @@ class CharacterScreen extends StatelessWidget {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-//  Rewards Screen
+//  Achievements Screen
 // ═══════════════════════════════════════════════════════════════════════════
 
-class RewardsScreen extends StatelessWidget {
-  const RewardsScreen({super.key});
+class AchievementsScreen extends StatelessWidget {
+  const AchievementsScreen({super.key});
   @override
   Widget build(BuildContext context) {
     final st = AppState.I;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return GradientScaffold(
-      title: 'المكافآت',
+      title: 'الإنجازات',
       child: ListenableBuilder(
         listenable: st,
         builder: (context, _) => ListView(
@@ -8747,102 +10282,52 @@ class RewardsScreen extends StatelessWidget {
           children: [
             GlassCard(
               gradient: LinearGradient(colors: [const Color(0xFFFFC107),
-                Color.lerp(const Color(0xFFFFC107), const Color(0xFFEC407A), 0.5)!],
-                begin: Alignment.topRight, end: Alignment.bottomLeft),
-              child: Row(children: [
-                const Icon(Icons.card_giftcard_rounded, color: Colors.white, size: 42),
-                const SizedBox(width: 14),
-                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  const Text('نقاطك القابلة للصرف', style: TextStyle(fontFamily: 'Cairo', color: Colors.white, fontSize: 13)),
-                  Text('${st.spendableXp} XP', style: const TextStyle(fontFamily: 'Cairo',
-                    color: Colors.white, fontSize: 28, fontWeight: FontWeight.w800)),
-                  Text('الإجمالي: ${st.totalXp} XP', style: TextStyle(fontFamily: 'Cairo',
-                    color: Colors.white.withValues(alpha: 0.9), fontSize: 11)),
-                ])),
-              ]),
-            ),
-            const SectionTitle(title: 'متجر المكافآت', icon: Icons.store_rounded),
-            ...kRewards.map((r) {
-              final owned = st.unlockedRewards.contains(r.id) && r.oneTime;
-              final affordable = st.spendableXp >= r.cost;
-              return Padding(padding: const EdgeInsets.only(bottom: 8), child: GlassCard(
-                padding: const EdgeInsets.all(14), radius: 18,
-                child: Row(children: [
-                  Container(width: 50, height: 50,
-                    decoration: BoxDecoration(color: r.color.withValues(alpha: 0.16),
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: r.color.withValues(alpha: 0.35), width: 1.2)),
-                    child: Icon(r.icon, color: r.color, size: 24)),
-                  const SizedBox(width: 12),
-                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text(r.title, style: const TextStyle(fontFamily: 'Cairo', fontSize: 13.5, fontWeight: FontWeight.w800)),
-                    const SizedBox(height: 3),
-                    Text(r.description, style: TextStyle(fontFamily: 'Cairo', fontSize: 11,
-                      color: isDark ? Colors.white60 : Colors.black54, height: 1.4)),
-                  ])),
-                  const SizedBox(width: 8),
-                  if (owned)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                      decoration: BoxDecoration(color: const Color(0xFF66BB6A).withValues(alpha: 0.16),
-                        borderRadius: BorderRadius.circular(11)),
-                      child: const Text('مملوك', style: TextStyle(fontFamily: 'Cairo',
-                        fontSize: 11, fontWeight: FontWeight.w800, color: Color(0xFF66BB6A))),
-                    )
-                  else
-                    Pressable(
-                      onTap: () async {
-                        haptic(HapticType.medium);
-                        final ok = await st.purchaseReward(r);
-                        if (!context.mounted) return;
-                        if (ok) {
-                          toast(context, 'اتفتح! ${r.title}');
-                          if (r.id == 'themepack1') st.setThemePalette('ocean');
-                          if (r.id == 'themepack2') st.setThemePalette('space');
-                        } else {
-                          toast(context, affordable ? 'حصلت مشكلة' : 'محتاج XP أكتر');
-                        }
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: affordable ? r.color : r.color.withValues(alpha: 0.3),
-                          borderRadius: BorderRadius.circular(11),
-                        ),
-                        child: Text('${r.cost} XP', style: const TextStyle(fontFamily: 'Cairo',
-                          fontSize: 11.5, fontWeight: FontWeight.w800, color: Colors.white)),
-                      ),
-                    ),
-                ]),
-              ));
-            }),
-            const SizedBox(height: 12),
-            GlassCard(
-              gradient: LinearGradient(colors: [st.accent, Color.lerp(st.accent, const Color(0xFF26A69A), 0.5)!],
+                Color.lerp(const Color(0xFFFFC107), const Color(0xFFFF6F00), 0.6)!],
                 begin: Alignment.topRight, end: Alignment.bottomLeft),
               child: Column(children: [
-                const Icon(Icons.play_circle_fill_rounded, color: Colors.white, size: 42),
-                const SizedBox(height: 10),
-                const Text('شاهد إعلان واكسب XP',
-                  style: TextStyle(fontFamily: 'Cairo', color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
-                const SizedBox(height: 6),
-                Text('تحصل على +50 XP لكل إعلان بمكافأة',
-                  style: TextStyle(fontFamily: 'Cairo', color: Colors.white.withValues(alpha: 0.9), fontSize: 12)),
+                Row(children: [
+                  const Icon(Icons.military_tech_rounded, color: Colors.white, size: 42),
+                  const SizedBox(width: 14),
+                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    const Text('مستواك', style: TextStyle(fontFamily: 'Cairo', color: Colors.white, fontSize: 13)),
+                    Text('المستوى ${st.level}', style: const TextStyle(fontFamily: 'Cairo', color: Colors.white, fontSize: 28, fontWeight: FontWeight.w800)),
+                    Text('${st.totalXp} XP', style: TextStyle(fontFamily: 'Cairo', color: Colors.white.withValues(alpha: 0.92), fontSize: 12)),
+                  ])),
+                ]),
                 const SizedBox(height: 14),
-                PrimaryButton(
-                  label: 'شاهد الإعلان',
-                  icon: Icons.play_arrow_rounded,
-                  color: Colors.white,
-                  onTap: () async {
-                    await AdManager.I.showRewarded(onReward: () async {
-                      await st.addXp(50);
-                      await st.incrementAdRewards();
-                      if (!context.mounted) return;
-                      toast(context, '+50 XP 🎉');
-                    });
-                  },
-                ),
+                ClipRRect(borderRadius: BorderRadius.circular(6), child: LinearProgressIndicator(value: st.levelProgress, minHeight: 8,
+                  backgroundColor: Colors.white.withValues(alpha: 0.25), valueColor: const AlwaysStoppedAnimation(Colors.white))),
               ]),
+            ),
+            const SectionTitle(title: 'الشارات', icon: Icons.emoji_events_rounded),
+            GridView.count(
+              crossAxisCount: 2, shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),
+              crossAxisSpacing: 10, mainAxisSpacing: 10, childAspectRatio: 0.95,
+              children: kAchievements.asMap().entries.map((e) {
+                final a = e.value;
+                final unlocked = st.unlockedAchievements.contains(a.id);
+                return StaggeredItem(index: e.key, baseDelay: const Duration(milliseconds: 15),
+                  child: GlassCard(
+                    padding: const EdgeInsets.all(14),
+                    child: Opacity(opacity: unlocked ? 1.0 : 0.35,
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Container(width: 52, height: 52,
+                          decoration: BoxDecoration(color: a.color.withValues(alpha: 0.18), borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: a.color.withValues(alpha: 0.4), width: 1.4)),
+                          child: Icon(unlocked ? a.icon : Icons.lock_rounded, color: a.color, size: 26)),
+                        const Spacer(),
+                        Text(a.title, style: const TextStyle(fontFamily: 'Cairo', fontSize: 13, fontWeight: FontWeight.w800)),
+                        const SizedBox(height: 4),
+                        Text(a.description, maxLines: 2, overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontFamily: 'Cairo', fontSize: 10.5, height: 1.4,
+                            color: isDark ? Colors.white54 : Colors.black45)),
+                        if (a.xp > 0) Text('+${a.xp} XP', style: TextStyle(fontFamily: 'Cairo', fontSize: 10.5,
+                          fontWeight: FontWeight.w800, color: a.color)),
+                      ]),
+                    ),
+                  ),
+                );
+              }).toList(),
             ),
           ],
         ),
@@ -8888,11 +10373,12 @@ class ThemesScreen extends StatelessWidget {
               children: kThemes.asMap().entries.map((entry) {
                 final t = entry.value;
                 final sel = st.themePaletteId == t.id;
-                final locked = (t.id == 'ocean' && !st.unlockedRewards.contains('themepack1') && st.spendableXp < 500)
-                  || (t.id == 'space' && !st.unlockedRewards.contains('themepack2') && st.spendableXp < 1000);
+                final locked = (t.id == 'ocean' && !st.unlockedRewards.contains('themepack1'))
+                  || (t.id == 'space' && !st.unlockedRewards.contains('themepack2'))
+                  || (t.id == 'fire' && !st.unlockedRewards.contains('themepack3'));
                 return StaggeredItem(index: entry.key, child: GlassCard(
                   onTap: () {
-                    if (locked) { toast(context, 'محتاج تشتريه من المتجر'); return; }
+                    if (locked) { toast(context, 'محتاج تشتريه من المتجر (${t.id == 'ocean' ? 500 : t.id == 'space' ? 1000 : 1500} XP)'); return; }
                     haptic(HapticType.medium);
                     st.setThemePalette(t.id);
                   },
@@ -8965,7 +10451,7 @@ class ThemesScreen extends StatelessWidget {
             Center(child: GhostButton(
               label: 'مكافآت وثيمات إضافية',
               icon: Icons.card_giftcard_rounded,
-              onTap: () => pushPage(context, const RewardsScreen()),
+              onTap: () => pushPage(context, const RewardsCenterScreen()),
             )),
           ],
         ),
@@ -8975,7 +10461,7 @@ class ThemesScreen extends StatelessWidget {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-//  WhatsApp Bulk Screen
+//  WhatsApp Bulk / Call Mode / App Lock Settings
 // ═══════════════════════════════════════════════════════════════════════════
 
 class WhatsAppBulkScreen extends StatefulWidget {
@@ -9186,10 +10672,6 @@ class _WhatsAppBulkScreenState extends State<WhatsAppBulkScreen> {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-//  Call Mode Screen
-// ═══════════════════════════════════════════════════════════════════════════
-
 class CallModeScreen extends StatefulWidget {
   const CallModeScreen({super.key});
   @override
@@ -9201,7 +10683,7 @@ class _CallModeScreenState extends State<CallModeScreen> {
   List<WaContact> _contacts = [];
   bool _loading = true;
   String _search = '';
-  String _mode = 'phone'; // phone, whatsapp
+  String _mode = 'phone';
 
   @override
   void initState() { super.initState(); _load(); }
@@ -9349,10 +10831,6 @@ class _CallModeScreenState extends State<CallModeScreen> {
     );
   }
 }
-
-// ═══════════════════════════════════════════════════════════════════════════
-//  App Lock Settings
-// ═══════════════════════════════════════════════════════════════════════════
 
 class AppLockSettingsScreen extends StatefulWidget {
   const AppLockSettingsScreen({super.key});
@@ -9520,81 +10998,7 @@ class _AppLockSettingsScreenState extends State<AppLockSettingsScreen> {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-//  Achievements Screen
-// ═══════════════════════════════════════════════════════════════════════════
-
-class AchievementsScreen extends StatelessWidget {
-  const AchievementsScreen({super.key});
-  @override
-  Widget build(BuildContext context) {
-    final st = AppState.I;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return GradientScaffold(
-      title: 'الإنجازات',
-      child: ListenableBuilder(
-        listenable: st,
-        builder: (context, _) => ListView(
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
-          children: [
-            GlassCard(
-              gradient: LinearGradient(colors: [const Color(0xFFFFC107),
-                Color.lerp(const Color(0xFFFFC107), const Color(0xFFFF6F00), 0.6)!],
-                begin: Alignment.topRight, end: Alignment.bottomLeft),
-              child: Column(children: [
-                Row(children: [
-                  const Icon(Icons.military_tech_rounded, color: Colors.white, size: 42),
-                  const SizedBox(width: 14),
-                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    const Text('مستواك', style: TextStyle(fontFamily: 'Cairo', color: Colors.white, fontSize: 13)),
-                    Text('المستوى ${st.level}', style: const TextStyle(fontFamily: 'Cairo', color: Colors.white, fontSize: 28, fontWeight: FontWeight.w800)),
-                    Text('${st.totalXp} XP', style: TextStyle(fontFamily: 'Cairo', color: Colors.white.withValues(alpha: 0.92), fontSize: 12)),
-                  ])),
-                ]),
-                const SizedBox(height: 14),
-                ClipRRect(borderRadius: BorderRadius.circular(6), child: LinearProgressIndicator(value: st.levelProgress, minHeight: 8,
-                  backgroundColor: Colors.white.withValues(alpha: 0.25), valueColor: const AlwaysStoppedAnimation(Colors.white))),
-              ]),
-            ),
-            const SectionTitle(title: 'الشارات', icon: Icons.emoji_events_rounded),
-            GridView.count(
-              crossAxisCount: 2, shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),
-              crossAxisSpacing: 10, mainAxisSpacing: 10, childAspectRatio: 0.95,
-              children: kAchievements.asMap().entries.map((e) {
-                final a = e.value;
-                final unlocked = st.unlockedAchievements.contains(a.id);
-                return StaggeredItem(index: e.key, baseDelay: const Duration(milliseconds: 15),
-                  child: GlassCard(
-                    padding: const EdgeInsets.all(14),
-                    child: Opacity(opacity: unlocked ? 1.0 : 0.35,
-                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Container(width: 52, height: 52,
-                          decoration: BoxDecoration(color: a.color.withValues(alpha: 0.18), borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: a.color.withValues(alpha: 0.4), width: 1.4)),
-                          child: Icon(unlocked ? a.icon : Icons.lock_rounded, color: a.color, size: 26)),
-                        const Spacer(),
-                        Text(a.title, style: const TextStyle(fontFamily: 'Cairo', fontSize: 13, fontWeight: FontWeight.w800)),
-                        const SizedBox(height: 4),
-                        Text(a.description, maxLines: 2, overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontFamily: 'Cairo', fontSize: 10.5, height: 1.4,
-                            color: isDark ? Colors.white54 : Colors.black45)),
-                        if (a.xp > 0) Text('+${a.xp} XP', style: TextStyle(fontFamily: 'Cairo', fontSize: 10.5,
-                          fontWeight: FontWeight.w800, color: a.color)),
-                      ]),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-//  Remaining Screens (compact but functional)
+//  Remaining Screens (compact — preserved from v11)
 // ═══════════════════════════════════════════════════════════════════════════
 
 const List<String> kExpenseCats = ['أكل', 'مواصلات', 'موبايل', 'نت', 'بيت', 'ترفيه', 'مذاكرة', 'رياضة', 'ملابس', 'صحة', 'أخرى'];
@@ -13039,6 +14443,25 @@ class SettingsScreen extends StatelessWidget {
               ),
             ])),
 
+            const SectionTitle(title: 'المكافآت', icon: Icons.card_giftcard_rounded),
+            GlassCard(child: Column(children: [
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Icon(Icons.card_giftcard_rounded, color: st.accent, size: 20),
+                title: const Text('مركز المكافآت', style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.w800, fontSize: 13.5)),
+                trailing: Icon(Icons.chevron_left_rounded, color: isDark ? Colors.white30 : Colors.black26),
+                onTap: () => pushPage(context, const RewardsCenterScreen()),
+              ),
+              const Divider(height: 20),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Icon(Icons.widgets_rounded, color: st.accent, size: 20),
+                title: const Text('الويدجت', style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.w800, fontSize: 13.5)),
+                trailing: Icon(Icons.chevron_left_rounded, color: isDark ? Colors.white30 : Colors.black26),
+                onTap: () => pushPage(context, const WidgetsCenterScreen()),
+              ),
+            ])),
+
             const SectionTitle(title: 'الأمان', icon: Icons.shield_rounded),
             GlassCard(child: Column(children: [
               ListTile(
@@ -13930,7 +15353,6 @@ class DeviceInfoScreen extends StatelessWidget {
             ['SDK', info != null ? '${info.version.sdkInt}' : '—'],
             ['Bootloader', info?.bootloader ?? '—'],
             ['نوع المعمارية', info != null ? info.supportedAbis.join(', ') : '—'],
-            ['نوع المعالج', info?.supported64BitAbis.join(', ') ?? '—'],
             ['جهاز حقيقي؟', info != null ? (info.isPhysicalDevice ? 'نعم' : 'محاكي') : '—'],
           ];
           return ListView(
