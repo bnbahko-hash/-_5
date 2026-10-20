@@ -17691,7 +17691,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
     if (q.startsWith('ضيف مهمة') || q.startsWith('اضف مهمة') || q.startsWith('أضف مهمة')) {
       final title = input.replaceFirst(RegExp(r'^(ضيف|اضف|أضف)\s+مهمة\s*[:\-]?\s*'), '').trim();
       if (title.isNotEmpty) {
-        await st.addTask(TaskItem(title: title, priority: 2, category: 'شخصي'));
+        await st.addTask(TaskItem(title: title, priority: 2, category: 'شخصي', date: todayKey()));
         return '✅ ضفتلك مهمة جديدة بعنوان: "$title" في مهام النهارده وكمان فعلت التنبيه ليها!';
       }
     }
