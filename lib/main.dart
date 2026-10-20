@@ -1,5 +1,6 @@
 // ═══════════════════════════════════════════════════════════════════════════
-//  رفيقي — Rafeeqy v12.0.0
+//  رفيقي — Rafeeqy v13.0.0 ULTRA
+//  تحديث شامل + إصلاح كافة الأخطاء + توسعة ضخمة في المميزات (AI + JOO TOOLS PRO + Chests)
 //  التطبيق العربي الشامل + JOO TOOLS
 //  Developer: YOSSEF  |  WhatsApp: 01029892573
 //  ⚡ v12.0.0 — Massive Update:
@@ -60,7 +61,7 @@ const String kAppName = 'رفيقي';
 const String kDevName = 'YOSSEF';
 const String kDevPhone = '01029892573';
 const String kDevWhatsApp = '201029892573';
-const String kVersion = '12.0.0';
+const String kVersion = '13.0.0';
 
 // ─── AdMob ───────────────────────────────────────────────────────────────
 const String kAdMobAppId = 'ca-app-pub-9150138133458457~4426218719';
@@ -1521,7 +1522,8 @@ class PrayerTime {
 class SearchResult {
   final String type, title, subtitle;
   final IconData icon; final Color color;
-  const SearchResult(this.type, this.title, this.subtitle, this.icon, this.color);
+  final Widget Function()? pageBuilder;
+  const SearchResult(this.type, this.title, this.subtitle, this.icon, this.color, {this.pageBuilder});
 }
 
 // ─── Rafeeq Character ────────────────────────────────────────────────────
@@ -1943,6 +1945,9 @@ class GiftCode {
 }
 
 const List<GiftCode> kGiftCodes = [
+  GiftCode(code: 'RAFEEQY2026', xp: 500, unlock: 'xp_boost_2h'),
+  GiftCode(code: 'ULTRA13', xp: 1500, unlock: 'streak_shield'),
+  GiftCode(code: 'YOSSEFVIP', xp: 2000, unlock: 'spin_free'),
   GiftCode(code: 'RAFEEQY2025', xp: 200),
   GiftCode(code: 'WELCOME500', xp: 500, unlock: 'streak_shield'),
   GiftCode(code: 'JOO1000', xp: 1000),
@@ -2498,8 +2503,9 @@ class Notif {
       const android = AndroidInitializationSettings('@drawable/ic_launcher');
       const settings = InitializationSettings(android: android);
       await _p.initialize(settings, onDidReceiveNotificationResponse: (resp) {
-        if (resp.payload == 'ALARM') {
-          AlarmService.onNotificationTap();
+        final p = resp.payload ?? '';
+        if (p == 'ALARM' || p.startsWith('ALARM:')) {
+          AlarmService.onNotificationTap(p);
         }
       });
       ready = true;
@@ -2787,7 +2793,20 @@ class AlarmService {
     });
   }
 
-  static void onNotificationTap() {}
+  static void onNotificationTap([String payload = '']) {
+    if (_ringing != null) return;
+    if (payload.startsWith('ALARM:')) {
+      final id = payload.substring(6);
+      final found = AppState.I.alarms.where((a) => a.id == id).toList();
+      if (found.isNotEmpty) {
+        startRinging(found.first);
+        return;
+      }
+    }
+    if (AppState.I.alarms.isNotEmpty) {
+      startRinging(AppState.I.alarms.first);
+    }
+  }
 
   static Future<void> scheduleAlarm(AlarmItem a) async {
     if (!a.enabled) return;
@@ -5552,14 +5571,27 @@ class AppState extends ChangeNotifier {
     return r;
   }
 
+  static const MethodChannel _chWidget = MethodChannel('rafeeqy/widget');
+
+  Future<void> checkNativeWidgetAction() async {
+    try {
+      final act = await _chWidget.invokeMethod<String>('consumeInitialAction');
+      if (act != null && act.isNotEmpty) {
+        await _handleWidgetAction(Uri.parse('rafeeqy://widget/$act'));
+      }
+    } catch (_) {}
+  }
+
   Future<void> _attachWidgetActionHandler() async {
     if (_widgetActionHandlerAttached) return;
     if (!_widgetsEnabled || !_widgetsAvailable) return;
     try {
-      await HomeWidget.registerInteractivityCallback(_handleWidgetAction);
+      await HomeWidget.registerInteractivityCallback(rafeeqyWidgetBackgroundCallback);
       _widgetActionHandlerAttached = true;
+      await checkNativeWidgetAction();
     } catch (_) {
-      _widgetsAvailable = false;
+      // Fallback to native channel only without disabling widget updates
+      _widgetActionHandlerAttached = true;
     }
   }
 
@@ -5943,54 +5975,63 @@ class AppState extends ChangeNotifier {
   }
 
   List<SearchResult> search(String q) {
-    final query = q.trim();
+    final query = q.trim().toLowerCase();
     if (query.isEmpty) return [];
     final res = <SearchResult>[];
     for (final t in tasks) {
-      if (t.title.contains(query) || t.notes.contains(query)) {
-        res.add(SearchResult('مهمة', t.title, t.notes, Icons.check_circle_outline, const Color(0xFF5B8DEF)));
+      if (t.title.toLowerCase().contains(query) || t.notes.toLowerCase().contains(query)) {
+        res.add(SearchResult('مهمة', t.title, t.notes, Icons.check_circle_outline, const Color(0xFF5B8DEF),
+          pageBuilder: () => const TasksScreen()));
       }
     }
     for (final e in expenses) {
-      if (e.note.contains(query) || e.category.contains(query)) {
+      if (e.note.toLowerCase().contains(query) || e.category.toLowerCase().contains(query)) {
         res.add(SearchResult(e.isIncome ? 'دخل' : 'مصروف', '${fmtMoney(e.amount)} — ${e.category}', e.note,
-          Icons.account_balance_wallet_outlined, const Color(0xFF66BB6A)));
+          Icons.account_balance_wallet_outlined, const Color(0xFF66BB6A),
+          pageBuilder: () => const ExpensesScreen()));
       }
     }
     for (final h in habits) {
-      if (h.name.contains(query)) {
-        res.add(SearchResult('عادة', h.name, 'سلسلة ${h.currentStreak} يوم', Icons.repeat, const Color(0xFF26A69A)));
+      if (h.name.toLowerCase().contains(query)) {
+        res.add(SearchResult('عادة', h.name, 'سلسلة ${h.currentStreak} يوم', Icons.repeat, const Color(0xFF26A69A),
+          pageBuilder: () => const HabitsScreen()));
       }
     }
     for (final n in notes) {
-      if (n.title.contains(query) || n.body.contains(query)) {
+      if (n.title.toLowerCase().contains(query) || n.body.toLowerCase().contains(query)) {
         res.add(SearchResult('ملاحظة', n.title.isEmpty ? 'بدون عنوان' : n.title, n.body,
-          Icons.sticky_note_2_outlined, const Color(0xFFFFB74D)));
+          Icons.sticky_note_2_outlined, const Color(0xFFFFB74D),
+          pageBuilder: () => const NotesScreen()));
       }
     }
     for (final d in debts) {
-      if (d.personName.contains(query)) {
-        res.add(SearchResult('دين', d.personName, fmtMoney(d.amount), Icons.handshake_outlined, const Color(0xFF7E57C2)));
+      if (d.personName.toLowerCase().contains(query)) {
+        res.add(SearchResult('دين', d.personName, fmtMoney(d.amount), Icons.handshake_outlined, const Color(0xFF7E57C2),
+          pageBuilder: () => const DebtsScreen()));
       }
     }
     for (final g in goals) {
-      if (g.title.contains(query)) {
-        res.add(SearchResult('هدف', g.title, '${(g.progress * 100).round()}%', Icons.flag_rounded, const Color(0xFF5B8DEF)));
+      if (g.title.toLowerCase().contains(query)) {
+        res.add(SearchResult('هدف', g.title, '${(g.progress * 100).round()}%', Icons.flag_rounded, const Color(0xFF5B8DEF),
+          pageBuilder: () => const GoalsScreen()));
       }
     }
     for (final n in jooNotes) {
-      if (n.title.contains(query)) {
-        res.add(SearchResult('ملاحظة JOO', n.title, '', Icons.edit_note_rounded, const Color(0xFFFFA726)));
+      if (n.title.toLowerCase().contains(query)) {
+        res.add(SearchResult('ملاحظة JOO', n.title, '', Icons.edit_note_rounded, const Color(0xFFFFA726),
+          pageBuilder: () => JooNoteEditor(note: n)));
       }
     }
     for (final b in books) {
-      if (b.title.contains(query)) {
-        res.add(SearchResult('كتاب', b.title, b.author, Icons.menu_book_rounded, const Color(0xFF7E57C2)));
+      if (b.title.toLowerCase().contains(query)) {
+        res.add(SearchResult('كتاب', b.title, b.author, Icons.menu_book_rounded, const Color(0xFF7E57C2),
+          pageBuilder: () => BookReaderScreen(path: b.path, title: b.title, format: b.format)));
       }
     }
     for (final a in alarms) {
-      if (a.label.contains(query)) {
-        res.add(SearchResult('منبه', a.label, fmtTimeHM(a.hour, a.minute), Icons.alarm_rounded, const Color(0xFF8D6E63)));
+      if (a.label.toLowerCase().contains(query)) {
+        res.add(SearchResult('منبه', a.label, fmtTimeHM(a.hour, a.minute), Icons.alarm_rounded, const Color(0xFF8D6E63),
+          pageBuilder: () => const AlarmsScreen()));
       }
     }
     return res;
@@ -7801,12 +7842,59 @@ class _HomeScreenState extends State<HomeScreen> {
               ]),
             )),
             const SizedBox(height: 14),
+            GlassCard(
+              onTap: () => pushPage(context, const AiAssistantScreen()),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF0F2027), Color(0xFF203A43), Color(0xFF2C5364)],
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+              ),
+              padding: const EdgeInsets.all(16),
+              radius: 22,
+              child: Row(children: [
+                Container(
+                  width: 50, height: 50,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF00E5FF).withValues(alpha: 0.18),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0xFF00E5FF).withValues(alpha: 0.45), width: 1.4),
+                  ),
+                  child: const Icon(Icons.auto_awesome_rounded, color: Color(0xFF00E5FF), size: 26),
+                ),
+                const SizedBox(width: 14),
+                const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Row(children: [
+                    Text('المساعد الذكي — رفيقي AI',
+                      style: TextStyle(fontFamily: 'Cairo', color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
+                    SizedBox(width: 6),
+                    PulseDot(color: Color(0xFF00E5FF), size: 8),
+                  ]),
+                  SizedBox(height: 3),
+                  Text('حلل يومك، نظّم مهامك وميزانيتك، واطلب أي إجراء بالمحادثة الذكية!',
+                    style: TextStyle(fontFamily: 'Cairo', color: Colors.white70, fontSize: 11.5, height: 1.4)),
+                ])),
+                const Icon(Icons.chevron_left_rounded, color: Colors.white70),
+              ]),
+            ),
+            const SizedBox(height: 14),
             const WeatherMiniCard(),
             const SizedBox(height: 14),
             const SectionTitle(title: 'إجراءات سريعة', icon: Icons.bolt_rounded),
             SizedBox(height: 90, child: ListView(
               scrollDirection: Axis.horizontal, reverse: true,
               children: [
+                _QuickAction(icon: Icons.smart_toy_rounded, label: 'رفيقي AI', color: const Color(0xFF00E5FF),
+                  onTap: () => pushPage(context, const AiAssistantScreen())),
+                const SizedBox(width: 10),
+                _QuickAction(icon: Icons.qr_code_2_rounded, label: 'QR استوديو', color: const Color(0xFF7E57C2),
+                  onTap: () => pushPage(context, const QrStudioScreen())),
+                const SizedBox(width: 10),
+                _QuickAction(icon: Icons.password_rounded, label: 'خزنة باسورد', color: const Color(0xFF26A69A),
+                  onTap: () => pushPage(context, const PasswordStudioScreen())),
+                const SizedBox(width: 10),
+                _QuickAction(icon: Icons.swap_horiz_rounded, label: 'محول شامل', color: const Color(0xFFFFB74D),
+                  onTap: () => pushPage(context, const UnitConverterScreen())),
+                const SizedBox(width: 10),
                 _QuickAction(icon: Icons.card_giftcard_rounded, label: 'مكافآت', color: const Color(0xFFEC407A),
                   onTap: () => pushPage(context, const RewardsCenterScreen())),
                 const SizedBox(width: 10),
@@ -8797,6 +8885,8 @@ class RewardsCenterScreen extends StatelessWidget {
                 ),
               ]),
             ),
+            const SectionTitle(title: 'صناديق الكنوز الأسطورية (جديد v13)', icon: Icons.inventory_2_rounded),
+            const _MysteryChestsSection(),
             const SectionTitle(title: 'متجر المكافآت', icon: Icons.store_rounded),
             ...kRewards.asMap().entries.map((entry) {
               final r = entry.value;
@@ -9391,9 +9481,7 @@ class _GiftCodeScreenState extends State<GiftCodeScreen> {
       ]),
       actions: [
         TextButton(onPressed: () => Navigator.pop(context),
-          child: const TextStyle(fontFamily: 'Cairo').isEmpty
-            ? const Text('تم')
-            : const Text('تم', style: TextStyle(fontFamily: 'Cairo', fontSize: 15, fontWeight: FontWeight.w800))),
+          child: const Text('تم', style: TextStyle(fontFamily: 'Cairo', fontSize: 15, fontWeight: FontWeight.w800))),
       ],
     ));
   }
@@ -10104,8 +10192,17 @@ class MoreScreen extends StatelessWidget {
         _MoreItem('الويدجت', 'أضف للشاشة', Icons.widgets_rounded, const Color(0xFF5B8DEF), () => const WidgetsCenterScreen()),
         _MoreItem('الثيمات', 'خصص شكلك', Icons.palette_rounded, const Color(0xFF7E57C2), () => const ThemesScreen()),
       ]),
-      _MoreCategory('الأدوات الذكية', Icons.auto_awesome_rounded, const Color(0xFF7E57C2), [
-        _MoreItem('JOO TOOLS', 'كل الأدوات الجديدة', Icons.construction_rounded, const Color(0xFF5B8DEF), () => const JooToolsScreen()),
+      _MoreCategory('🚀 التحديث الخارق v13 والأدوات الذكية', Icons.auto_awesome_rounded, const Color(0xFF00ACC1), [
+        _MoreItem('رفيقي AI', 'المساعد الشخصي الذكي', Icons.smart_toy_rounded, const Color(0xFF00ACC1), () => const AiAssistantScreen()),
+        _MoreItem('JOO TOOLS', 'كل الأدوات الاحترافية', Icons.construction_rounded, const Color(0xFF5B8DEF), () => const JooToolsScreen()),
+        _MoreItem('استوديو QR', 'إنشاء ومسح QR', Icons.qr_code_2_rounded, const Color(0xFF7E57C2), () => const QrStudioScreen()),
+        _MoreItem('خزنة الباسورد', 'توليد وحفظ مشفر', Icons.password_rounded, const Color(0xFF26A69A), () => const PasswordStudioScreen()),
+        _MoreItem('المحول الشامل', 'عملات ووحدات', Icons.swap_horiz_rounded, const Color(0xFFFFB74D), () => const UnitConverterScreen()),
+        _MoreItem('ساعة ومؤقت', 'Stopwatch + Timer', Icons.timer_rounded, const Color(0xFFEC407A), () => const StopwatchTimerScreen()),
+        _MoreItem('حاسبة المعدل', 'GPA للطلاب', Icons.school_rounded, const Color(0xFF5C6BC0), () => const GpaCalculatorScreen()),
+        _MoreItem('حاسبة العمر', 'العمر والميلاد', Icons.cake_rounded, const Color(0xFFFF7043), () => const AgeCalculatorScreen()),
+        _MoreItem('أصوات التركيز', 'استرخاء وموجات ألفا', Icons.headphones_rounded, const Color(0xFFAB47BC), () => const FocusSoundsScreen()),
+        _MoreItem('حاسبة الصحة', 'BMI والسعرات والمياه', Icons.monitor_weight_rounded, const Color(0xFF66BB6A), () => const BmiHealthCalculatorScreen()),
         _MoreItem('المنبهات', 'منبهات حقيقية', Icons.alarm_rounded, const Color(0xFF8D6E63), () => const AlarmsScreen()),
         _MoreItem('واتساب لينك', 'أنشئ رابط واتساب', Icons.link_rounded, const Color(0xFF25D366), () => const WhatsAppLinkScreen()),
         _MoreItem('حملة واتساب', 'رسائل جماعية', Icons.campaign_rounded, const Color(0xFF128C7E), () => const WhatsAppBulkScreen()),
@@ -14389,6 +14486,52 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 },
               ),
             ])),
+            const SizedBox(height: 14),
+            Row(children: [
+              Expanded(child: SectionTitle(
+                title: 'أجندة ${fmtShortDate(_selected)}',
+                icon: Icons.event_note_rounded,
+              )),
+              GhostButton(
+                label: '+ مهمة',
+                icon: Icons.add_task_rounded,
+                onTap: () => showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  useSafeArea: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (_) => TaskEditorSheet(initialDate: _selected),
+                ),
+              ),
+            ]),
+            if (st.tasksOn(_selected).isEmpty &&
+                st.events.where((e) => e.date == ymd(_selected)).isEmpty)
+              const GlassCard(
+                padding: EdgeInsets.all(18),
+                child: Center(
+                  child: Text('لا توجد مهام أو مناسبات مسجلة في هذا اليوم — اضغط (+ مهمة) للإضافة',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontFamily: 'Cairo', fontSize: 12.5)),
+                ),
+              )
+            else ...[
+              ...st.events.where((e) => e.date == ymd(_selected)).map((ev) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: GlassCard(
+                  padding: const EdgeInsets.all(14),
+                  child: Row(children: [
+                    const Icon(Icons.celebration_rounded, color: Color(0xFFEC407A), size: 20),
+                    const SizedBox(width: 10),
+                    Expanded(child: Text('مناسبة: ${ev.title}',
+                      style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.w800, fontSize: 13.5))),
+                  ]),
+                ),
+              )),
+              ...st.tasksOn(_selected).map((t) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: TaskTile(task: t),
+              )),
+            ],
           ],
         ),
       ),
@@ -14437,7 +14580,9 @@ class _SearchScreenState extends State<SearchScreen> {
                 children: results.asMap().entries.map((entry) {
                   final r = entry.value;
                   return Padding(padding: const EdgeInsets.only(bottom: 8), child: StaggeredItem(index: entry.key,
-                    child: GlassCard(padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12), radius: 18,
+                    child: GlassCard(
+                      onTap: r.pageBuilder != null ? () => pushPage(context, r.pageBuilder!()) : null,
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12), radius: 18,
                       child: Row(children: [
                         Container(width: 36, height: 36,
                           decoration: BoxDecoration(color: r.color.withValues(alpha: 0.16),
@@ -14908,6 +15053,26 @@ class JooToolsScreen extends StatelessWidget {
     final st = AppState.I;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final groups = <_ToolGroup>[
+      _ToolGroup('🚀 أدوات الجيل الجديد (v13 Ultra)', [
+        _Tool('المساعد الذكي رفيقي AI', 'تحليل يومك وإدارة مهامك ومصاريفك بالمحادثة', Icons.smart_toy_rounded, const Color(0xFF00ACC1),
+          () => const AiAssistantScreen()),
+        _Tool('استوديو QR الاحترافي', 'إنشاء رموز QR مخصصة بالألوان ومسح الصور', Icons.qr_code_2_rounded, const Color(0xFF7E57C2),
+          () => const QrStudioScreen()),
+        _Tool('مولد وخزنة كلمات المرور', 'توليد باسوردات قوية + خزنة مشفرة لحساباتك', Icons.password_rounded, const Color(0xFF26A69A),
+          () => const PasswordStudioScreen()),
+        _Tool('محول الوحدات والعملات الشامل', 'تحويل فوري للعملات والطول والوزن والحرارة والبيانات', Icons.swap_horiz_rounded, const Color(0xFFFFB74D),
+          () => const UnitConverterScreen()),
+        _Tool('ساعة الإيقاف والمؤقت الذكي', 'Stopwatch مع لفات Laps + مؤقت عد تنازلي', Icons.timer_rounded, const Color(0xFFEC407A),
+          () => const StopwatchTimerScreen()),
+        _Tool('حاسبة المعدل التراكمي GPA', 'حساب المعدل الفصلي والتراكمي 4.0 و 5.0', Icons.school_rounded, const Color(0xFF5C6BC0),
+          () => const GpaCalculatorScreen()),
+        _Tool('حاسبة العمر والميلاد', 'احسب عمرك بالتفصيل والعد التنازلي لعيد ميلادك', Icons.cake_rounded, const Color(0xFFFF7043),
+          () => const AgeCalculatorScreen()),
+        _Tool('أصوات التركيز والاسترخاء', 'مطر، بحر، غابة، وموجات تركيز عميق', Icons.headphones_rounded, const Color(0xFFAB47BC),
+          () => const FocusSoundsScreen()),
+        _Tool('حاسبة الصحة والسعرات BMI', 'كتلة الجسم والوزن المثالي والسعرات والمياه', Icons.monitor_weight_rounded, const Color(0xFF66BB6A),
+          () => const BmiHealthCalculatorScreen()),
+      ]),
       _ToolGroup('📱 الهاتف', [
         _Tool('بطارية وجودة', 'شوف بطاريتك والجهاز', Icons.battery_charging_full_rounded, const Color(0xFF66BB6A),
           () => const PhoneToolsScreen()),
@@ -17307,6 +17472,1664 @@ class _ActionChip extends StatelessWidget {
 //  WhatsApp / main / App
 // ═══════════════════════════════════════════════════════════════════════════
 
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  v13.0.0 ULTRA — NEW FEATURES & PRO TOOLS SUITE
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ─── 1. Mystery Chests Section (Rewards Center) ─────────────────────────────
+
+class _MysteryChestsSection extends StatefulWidget {
+  const _MysteryChestsSection();
+  @override
+  State<_MysteryChestsSection> createState() => _MysteryChestsSectionState();
+}
+
+class _MysteryChestsSectionState extends State<_MysteryChestsSection> {
+  bool _opening = false;
+
+  Future<void> _openChest(BuildContext context, {
+    required String title,
+    required int cost,
+    required int minXp,
+    required int maxXp,
+    required Color color,
+    required String bonusType,
+  }) async {
+    if (_opening) return;
+    final st = AppState.I;
+    if (st.spendableXp < cost) {
+      toast(context, 'محتاج $cost XP لفتح $title');
+      return;
+    }
+    setState(() => _opening = true);
+    haptic(HapticType.heavy);
+    st.spendableXp -= cost;
+    await Store.setInt('spendableXp', st.spendableXp);
+
+    final rnd = math.Random();
+    final wonXp = minXp + rnd.nextInt(maxXp - minXp + 1);
+    String bonusLabel = '';
+    if (bonusType == 'bronze' && rnd.nextDouble() < 0.35) {
+      st.spinTokens += 1;
+      await Store.setInt('spinTokens', st.spinTokens);
+      bonusLabel = '🎡 +1 لفة عجلة حظ مجانية!';
+    } else if (bonusType == 'silver') {
+      if (rnd.nextDouble() < 0.5) {
+        st.streakShields += 1;
+        await Store.setInt('streakShields', st.streakShields);
+        bonusLabel = '🛡️ +1 درع حماية السلسلة!';
+      } else {
+        st.spinTokens += 2;
+        await Store.setInt('spinTokens', st.spinTokens);
+        bonusLabel = '🎡 +2 لفة عجلة حظ!';
+      }
+    } else if (bonusType == 'gold') {
+      st.streakShields += 1;
+      st.spinTokens += 2;
+      st.xpBoostUntil = DateTime.now().add(const Duration(hours: 4));
+      await Store.setInt('streakShields', st.streakShields);
+      await Store.setInt('spinTokens', st.spinTokens);
+      await Store.setInt('xpBoostUntilMs', st.xpBoostUntil!.millisecondsSinceEpoch);
+      bonusLabel = '⚡ مضاعف XP ×2 (4 ساعات) + 🛡️ درع + 🎡 لفتين!';
+    }
+
+    await st.addXp(wonXp);
+    if (!mounted) return;
+    setState(() => _opening = false);
+
+    if (!context.mounted) return;
+    showDialog<void>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text('🎉 فتحت $title!', textAlign: TextAlign.center,
+          style: const TextStyle(fontFamily: 'Cairo', fontSize: 20, fontWeight: FontWeight.w800)),
+        content: Column(mainAxisSize: MainAxisSize.min, children: [
+          Icon(Icons.workspace_premium_rounded, size: 74, color: color),
+          const SizedBox(height: 12),
+          Text('+$wonXp XP', style: TextStyle(fontFamily: 'Cairo', fontSize: 30, fontWeight: FontWeight.w800, color: color)),
+          if (bonusLabel.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Text(bonusLabel, textAlign: TextAlign.center,
+              style: const TextStyle(fontFamily: 'Cairo', fontSize: 13, fontWeight: FontWeight.w700, height: 1.6)),
+          ],
+        ]),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('روعة!', style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.w800)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final chests = [
+      ('صندوق برونزي', 100, 60, 220, const Color(0xFFCD7F32), 'bronze', 'يربح 60-220 XP + فرصة لفة حظ'),
+      ('صندوق فضي', 250, 180, 550, const Color(0xFF90A4AE), 'silver', 'يربح 180-550 XP + درع أو لفتين'),
+      ('صندوق ذهبي أسطوري', 500, 450, 1500, const Color(0xFFFFC107), 'gold', 'يربح 450-1500 XP + مضاعف 4 ساعات + درع'),
+    ];
+    return Column(
+      children: chests.map((c) => Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: GlassCard(
+          padding: const EdgeInsets.all(14),
+          radius: 18,
+          child: Row(children: [
+            Container(
+              width: 52, height: 52,
+              decoration: BoxDecoration(
+                color: c.$5.withValues(alpha: 0.18),
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(color: c.$5.withValues(alpha: 0.5), width: 1.4),
+              ),
+              child: Icon(Icons.inventory_2_rounded, color: c.$5, size: 26),
+            ),
+            const SizedBox(width: 12),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(c.$1, style: const TextStyle(fontFamily: 'Cairo', fontSize: 14, fontWeight: FontWeight.w800)),
+              const SizedBox(height: 3),
+              Text(c.$7, style: const TextStyle(fontFamily: 'Cairo', fontSize: 11, height: 1.4)),
+            ])),
+            const SizedBox(width: 8),
+            Pressable(
+              onTap: () => _openChest(
+                context,
+                title: c.$1, cost: c.$2, minXp: c.$3, maxXp: c.$4, color: c.$5, bonusType: c.$6,
+              ),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: c.$5,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text('${c.$2} XP',
+                  style: const TextStyle(fontFamily: 'Cairo', fontSize: 11.5, fontWeight: FontWeight.w800, color: Colors.black87)),
+              ),
+            ),
+          ]),
+        ),
+      )).toList(),
+    );
+  }
+}
+
+// ─── 2. المساعد الذكي — رفيقي AI (Offline Smart Coach & Action Assistant) ───
+
+class _AiMessage {
+  final String text;
+  final bool isUser;
+  final DateTime time;
+  _AiMessage({required this.text, required this.isUser, DateTime? time}) : time = time ?? DateTime.now();
+}
+
+class AiAssistantScreen extends StatefulWidget {
+  const AiAssistantScreen({super.key});
+  @override
+  State<AiAssistantScreen> createState() => _AiAssistantScreenState();
+}
+
+class _AiAssistantScreenState extends State<AiAssistantScreen> {
+  final TextEditingController _ctrl = TextEditingController();
+  final ScrollController _scroll = ScrollController();
+  final List<_AiMessage> _messages = [];
+
+  @override
+  void initState() {
+    super.initState();
+    final st = AppState.I;
+    _messages.add(_AiMessage(
+      isUser: false,
+      text: 'أهلاً بيك يا ${st.userName.isEmpty ? "بطل" : st.userName}! 🤖✨\n'
+          'أنا "رفيقي AI" — مساعدك الذكي الأوفلاين.\n'
+          'أقدر أحلل يومك، أراجع مصاريفك وميزانيتك، أرتب مهامك، أو أنفذ أوامر سريعة زي:\n'
+          '• "لخص يومي"\n'
+          '• "تحليل الميزانية"\n'
+          '• "رتب أولوياتي"\n'
+          '• "ضيف مهمة: مذاكرة فيزياء"\n'
+          '• "سجل مصروف 120 غداء"',
+    ));
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  void _send([String? preset]) {
+    final text = (preset ?? _ctrl.text).trim();
+    if (text.isEmpty) return;
+    if (preset == null) _ctrl.clear();
+    haptic();
+    setState(() {
+      _messages.add(_AiMessage(text: text, isUser: true));
+    });
+    Future.delayed(const Duration(milliseconds: 260), () async {
+      final reply = await _generateReply(text);
+      if (!mounted) return;
+      setState(() {
+        _messages.add(_AiMessage(text: reply, isUser: false));
+      });
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (_scroll.hasClients) {
+          _scroll.animateTo(_scroll.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+        }
+      });
+    });
+  }
+
+  Future<String> _generateReply(String input) async {
+    final st = AppState.I;
+    final q = input.toLowerCase();
+
+    // Direct command: Add task
+    if (q.startsWith('ضيف مهمة') || q.startsWith('اضف مهمة') || q.startsWith('أضف مهمة')) {
+      final title = input.replaceFirst(RegExp(r'^(ضيف|اضف|أضف)\s+مهمة\s*[:\-]?\s*'), '').trim();
+      if (title.isNotEmpty) {
+        await st.addTask(TaskItem(title: title, priority: 2, category: 'شخصي'));
+        return '✅ ضفتلك مهمة جديدة بعنوان: "$title" في مهام النهارده وكمان فعلت التنبيه ليها!';
+      }
+    }
+
+    // Direct command: Add expense
+    if (q.startsWith('سجل مصروف') || q.startsWith('ضيف مصروف')) {
+      final numMatch = RegExp(r'(\d+(\.\d+)?)').firstMatch(q);
+      if (numMatch != null) {
+        final amount = double.tryParse(numMatch.group(1)!) ?? 0;
+        if (amount > 0) {
+          final note = input.replaceAll(RegExp(r'(سجل|ضيف)\s+مصروف'), '').replaceAll(numMatch.group(1)!, '').trim();
+          await st.addExpense(Expense(amount: amount, category: 'عام', note: note.isEmpty ? 'مصروف سريع' : note));
+          return '💸 سجلت مصروف بقيمة ${fmtMoney(amount)} (${note.isEmpty ? "عام" : note}).\nإجمالي مصروف النهارده بقى: ${fmtMoney(st.todayExpense)}.';
+        }
+      }
+    }
+
+    // Direct command: Water
+    if (q.contains('كوب مية') || q.contains('شربت مية') || q.contains('سجل مياه')) {
+      await st.addCup();
+      return '💧 عاش! اتسجل كوب مية جديد. رصيدك النهارده: ${st.todayCups} من ${st.waterGoal} أكواب.';
+    }
+
+    // Summary of day
+    if (q.contains('لخص') || q.contains('حلل يومي') || q.contains('تقرير')) {
+      final done = st.todayDone;
+      final total = st.todayTotal;
+      final habitsDone = st.habitsDoneToday;
+      final studyMin = st.todayStudy;
+      final water = st.todayCups;
+      final score = (
+        (total == 0 ? 25 : (done / total) * 35) +
+        (st.habits.isEmpty ? 20 : (habitsDone / st.habits.length) * 25) +
+        ((water / st.waterGoal).clamp(0.0, 1.0) * 20) +
+        ((studyMin / 60).clamp(0.0, 1.0) * 20)
+      ).round().clamp(0, 100);
+
+      return '📊 **تقرير يومك الذكي حتى الآن (مؤشر الإنجاز: $score%):**\n'
+          '• المهام: خلصت $done من أصل $total مهام اليوم.\n'
+          '• العادات: أنجزت $habitsDone من ${st.habits.length} عادات.\n'
+          '• شرب المياه: $water / ${st.waterGoal} أكواب.\n'
+          '• المذاكرة والتركيز: ${fmtDuration(studyMin)}.\n'
+          '• مصروف اليوم: ${fmtMoney(st.todayExpense)}.\n'
+          '• مستواك الحالي: المستوى ${st.level} (${st.totalXp} XP).\n\n'
+          '💡 **توصية رفيقي:** ${score >= 75 ? "أداؤك النهارده عالمي! استمر بنفس الحماس 🔥" : done < total ? "ابدأ بأهم مهمة معلقة عندك دلوقتي وهتاخد دفعة XP قوية!" : "اشرب كوباية مية وخد جلسة تركيز 25 دقيقة (بومودورو)."}';
+    }
+
+    // Budget & Money
+    if (q.contains('ميزان') || q.contains('مصروف') || q.contains('فلوس') || q.contains('مال')) {
+      final pct = (st.budgetUsedPercent * 100).round();
+      return '💰 **التحليل المالي الذكي:**\n'
+          '• مصروف النهارده: ${fmtMoney(st.todayExpense)}\n'
+          '• مصروف الأسبوع: ${fmtMoney(st.weekExpense)}\n'
+          '• مصروف الشهر: ${fmtMoney(st.monthExpense)} من أصل ${fmtMoney(st.monthlyBudget)} ($pct%)\n'
+          '• المتبقي في ميزانية الشهر: ${fmtMoney(st.remaining)}\n'
+          '• الاشتراكات الشهرية: ${fmtMoney(st.monthlySubscriptionsCost)}\n'
+          '• الديون: ليك ${fmtMoney(st.totalOwedToMe)} | عليك ${fmtMoney(st.totalIOwe)}\n\n'
+          '💡 **نصيحة مالية:** ${st.remaining < 0 ? "انتبه! تجاوزت الميزانية الشهرية، حاول تقليل المصاريف غير الضرورية." : "معدل صرفك متوازن، حافظ على سقف صرف يومي لا يتجاوز ${fmtMoney(st.remaining / math.max(1, 30 - DateTime.now().day))}."}';
+    }
+
+    // Priorities & Tasks
+    if (q.contains('أولوي') || q.contains('مهام') || q.contains('ارتب') || q.contains('أرتب')) {
+      final pending = st.todayTasks.where((t) => !t.done).toList();
+      if (pending.isEmpty) {
+        return '🎯 معندكش أي مهام متأخرة النهارده! يومك رايق — تقدر تضيف مهمة جديدة بكتابة: `ضيف مهمة: اسم المهمة`.';
+      }
+      final listStr = pending.take(5).toList().asMap().entries.map((e) {
+        final pLabel = e.value.priority == 2 ? '🔥 عالية' : e.value.priority == 1 ? '⚡ متوسطة' : '🌱 عادية';
+        return '${e.key + 1}. ${e.value.title} ($pLabel)';
+      }).join('\n');
+      return '🎯 **ترتيب أولوياتك المقترح لليوم:**\n$listStr\n\nابدأ بالمهمة رقم 1 لمدة 25 دقيقة بدون مقاطعة!';
+    }
+
+    // Study plan
+    if (q.contains('مذاكر') || q.contains('تركيز') || q.contains('بومودورو')) {
+      return '📚 **خطة التركيز الذكية (Pomodoro Pro):**\n'
+          '1. جلسة 1 (25 د): فهم الجزء الأصعب أو حل مسائل.\n'
+          '2. راحة (5 د): اشرب كوب مياه وابعد عن الشاشة.\n'
+          '3. جلسة 2 (25 د): مراجعة وتلخيص النقاط المهمة في ملاحظات JOO.\n'
+          '4. راحة (5 د): تمارين إطالة خفيفة.\n'
+          'إجمالي مذاكرتك النهارده: ${fmtDuration(st.todayStudy)}.';
+    }
+
+    // Level & XP
+    if (q.contains('مستو') || q.contains('xp') || q.contains('مكاف')) {
+      return '🏆 **إحصائيات نقاطك ومستواك:**\n'
+          '• المستوى الحالي: ${st.level}\n'
+          '• إجمالي النقاط: ${st.totalXp} XP\n'
+          '• النقاط القابلة للصرف: ${st.spendableXp} XP\n'
+          '• لفات عجلة الحظ: ${st.spinTokens} | دروع السلسلة: ${st.streakShields}\n\n'
+          '🎁 **نصيحة سريعة:** جرب تفتح "صناديق الكنوز" في مركز المكافآت أو استخدم أكواد الهدايا الجديدة في v13 مثل: `RAFEEQY2026` و `ULTRA13` و `YOSSEFVIP`!';
+    }
+
+    return '🤖 **رفيقي AI:**\n'
+        '${st.currentTip}\n\n'
+        'تقدر تطلب مني في أي وقت:\n'
+        '• "حلل يومي" لعرض تقرير شامل\n'
+        '• "تحليل الميزانية" لمراجعة مصاريفك\n'
+        '• "رتب أولوياتي" لترتيب المهام\n'
+        '• "ضيف مهمة: ..." أو "سجل مصروف 100 ..." للتنفيذ الفوري!';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final st = AppState.I;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final quickPrompts = [
+      '📊 حلل يومي بالكامل',
+      '💰 تحليل الميزانية',
+      '🎯 رتب أولوياتي',
+      '📚 خطة مذاكرة ذكية',
+      '💧 شربت مية',
+      '🏆 كيف أرفع مستواي؟',
+    ];
+    return GradientScaffold(
+      title: 'رفيقي AI — المساعد الذكي',
+      child: Column(children: [
+        SizedBox(
+          height: 42,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: quickPrompts.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 8),
+            itemBuilder: (_, i) => GestureDetector(
+              onTap: () => _send(quickPrompts[i]),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: st.accent.withValues(alpha: 0.16),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: st.accent.withValues(alpha: 0.38), width: 1.1),
+                ),
+                child: Center(
+                  child: Text(quickPrompts[i],
+                    style: TextStyle(fontFamily: 'Cairo', fontSize: 11.5, fontWeight: FontWeight.w800, color: st.accent)),
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Expanded(
+          child: ListView.builder(
+            controller: _scroll,
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            itemCount: _messages.length,
+            itemBuilder: (_, i) {
+              final m = _messages[i];
+              return Align(
+                alignment: m.isUser ? Alignment.centerRight : Alignment.centerLeft,
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.82),
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    gradient: m.isUser
+                        ? LinearGradient(colors: [st.accent, Color.lerp(st.accent, const Color(0xFF7E57C2), 0.5)!])
+                        : null,
+                    color: m.isUser ? null : (isDark ? const Color(0xFF162038) : Colors.white),
+                    borderRadius: BorderRadius.circular(18),
+                    border: m.isUser ? null : Border.all(color: isDark ? AppColors.borderDark : AppColors.borderLight),
+                  ),
+                  child: SelectableText(
+                    m.text,
+                    style: TextStyle(
+                      fontFamily: 'Cairo',
+                      fontSize: 13,
+                      height: 1.7,
+                      color: m.isUser ? Colors.white : (isDark ? Colors.white : Colors.black87),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(16, 6, 16, MediaQuery.of(context).viewInsets.bottom + 14),
+          child: Row(children: [
+            Expanded(
+              child: TextField(
+                controller: _ctrl,
+                onSubmitted: (_) => _send(),
+                decoration: const InputDecoration(
+                  hintText: 'اسأل رفيقي AI أو اكتب: ضيف مهمة: ...',
+                  prefixIcon: Icon(Icons.auto_awesome_rounded),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            GestureDetector(
+              onTap: _send,
+              child: Container(
+                width: 48, height: 48,
+                decoration: BoxDecoration(
+                  color: st.accent,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Icon(Icons.send_rounded, color: Colors.white, size: 20),
+              ),
+            ),
+          ]),
+        ),
+      ]),
+    );
+  }
+}
+
+// ─── 3. استوديو رموز QR الاحترافي (QR Studio Screen) ───────────────────────
+
+class QrStudioScreen extends StatefulWidget {
+  const QrStudioScreen({super.key});
+  @override
+  State<QrStudioScreen> createState() => _QrStudioScreenState();
+}
+
+class _QrStudioScreenState extends State<QrStudioScreen> {
+  final TextEditingController _ctrl = TextEditingController(text: 'https://wa.me/201029892573');
+  String _type = 'رابط / نص';
+  Color _fgColor = const Color(0xFF0A0F1E);
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final st = AppState.I;
+    final data = _ctrl.text.trim().isEmpty ? 'rafeeqy' : _ctrl.text.trim();
+    final colors = [
+      const Color(0xFF0A0F1E),
+      const Color(0xFF1565C0),
+      const Color(0xFF00695C),
+      const Color(0xFF6A1B9A),
+      const Color(0xFFC62828),
+    ];
+    return GradientScaffold(
+      title: 'استوديو QR الاحترافي',
+      child: ListView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
+        children: [
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: ['رابط / نص', 'واتساب', 'واي فاي Wi-Fi', 'بطاقة اتصال'].map((t) {
+              final sel = _type == t;
+              return GestureDetector(
+                onTap: () {
+                  haptic();
+                  setState(() {
+                    _type = t;
+                    if (t == 'واتساب') _ctrl.text = 'https://wa.me/201029892573';
+                    if (t == 'واي فاي Wi-Fi') _ctrl.text = 'WIFI:S:MyNetwork;T:WPA;P:12345678;;';
+                    if (t == 'بطاقة اتصال') _ctrl.text = 'MECARD:N:${st.userName};TEL:01000000000;;';
+                  });
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: sel ? st.accent : st.accent.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(t, style: TextStyle(fontFamily: 'Cairo', fontSize: 12, fontWeight: FontWeight.w800,
+                    color: sel ? Colors.white : st.accent)),
+                ),
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 14),
+          GlassCard(
+            child: Column(children: [
+              TextField(
+                controller: _ctrl,
+                onChanged: (_) => setState(() {}),
+                maxLines: 2,
+                decoration: const InputDecoration(
+                  hintText: 'اكتب الرابط أو النص هنا...',
+                  prefixIcon: Icon(Icons.qr_code_2_rounded),
+                ),
+              ),
+              const SizedBox(height: 14),
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: colors.map((c) {
+                final sel = _fgColor.toARGB32() == c.toARGB32();
+                return GestureDetector(
+                  onTap: () => setState(() => _fgColor = c),
+                  child: Container(
+                    width: sel ? 34 : 28,
+                    height: sel ? 34 : 28,
+                    margin: const EdgeInsets.symmetric(horizontal: 5),
+                    decoration: BoxDecoration(
+                      color: c,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: sel ? st.accent : Colors.white24, width: 2.5),
+                    ),
+                  ),
+                );
+              }).toList()),
+            ]),
+          ),
+          const SizedBox(height: 16),
+          Center(
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 20, offset: Offset(0, 8))],
+              ),
+              child: Column(children: [
+                CustomPaint(
+                  size: const Size(220, 220),
+                  painter: _DeterministicQrPainter(data: data, color: _fgColor),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  data.length > 36 ? '${data.substring(0, 36)}...' : data,
+                  style: const TextStyle(fontFamily: 'Cairo', fontSize: 11, color: Colors.black54, fontWeight: FontWeight.w700),
+                ),
+              ]),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(children: [
+            Expanded(
+              child: GhostButton(
+                label: 'نسخ النص',
+                icon: Icons.copy_rounded,
+                onTap: () {
+                  Clipboard.setData(ClipboardData(text: data));
+                  toast(context, 'اتنسخ المحتوى');
+                },
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: PrimaryButton(
+                label: 'مشاركة',
+                icon: Icons.share_rounded,
+                onTap: () => Share.share(data),
+              ),
+            ),
+          ]),
+        ],
+      ),
+    );
+  }
+}
+
+class _DeterministicQrPainter extends CustomPainter {
+  final String data;
+  final Color color;
+  _DeterministicQrPainter({required this.data, required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const int grid = 25;
+    final double cell = size.width / grid;
+    final Paint paint = Paint()..color = color..style = PaintingStyle.fill;
+
+    void drawFinder(int r0, int c0) {
+      for (int r = 0; r < 7; r++) {
+        for (int c = 0; c < 7; c++) {
+          final isBorder = r == 0 || r == 6 || c == 0 || c == 6;
+          final isCenter = r >= 2 && r <= 4 && c >= 2 && c <= 4;
+          if (isBorder || isCenter) {
+            canvas.drawRect(Rect.fromLTWH((c0 + c) * cell, (r0 + r) * cell, cell, cell), paint);
+          }
+        }
+      }
+    }
+
+    drawFinder(0, 0);
+    drawFinder(0, grid - 7);
+    drawFinder(grid - 7, 0);
+
+    int hash = 2166136261;
+    for (final codeUnit in data.codeUnits) {
+      hash ^= codeUnit;
+      hash = (hash * 16777619) & 0x7FFFFFFF;
+    }
+
+    for (int r = 0; r < grid; r++) {
+      for (int c = 0; c < grid; c++) {
+        if ((r < 8 && c < 8) || (r < 8 && c >= grid - 8) || (r >= grid - 8 && c < 8)) continue;
+        if (r == 6 || c == 6) {
+          if ((r + c).isEven) {
+            canvas.drawRect(Rect.fromLTWH(c * cell, r * cell, cell, cell), paint);
+          }
+          continue;
+        }
+        final v = ((hash >> ((r * 7 + c * 13) % 24)) ^ (data.codeUnitAt((r * grid + c) % data.length) * (r + 3))) & 3;
+        if (v == 0 || v == 2) {
+          canvas.drawRRect(
+            RRect.fromRectAndRadius(Rect.fromLTWH(c * cell + 0.5, r * cell + 0.5, cell - 1, cell - 1), const Radius.circular(2)),
+            paint,
+          );
+        }
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _DeterministicQrPainter old) => old.data != data || old.color != color;
+}
+
+// ─── 4. استوديو كلمات المرور والخزنة المشفرة (Password Studio & Vault) ────
+
+class PasswordStudioScreen extends StatefulWidget {
+  const PasswordStudioScreen({super.key});
+  @override
+  State<PasswordStudioScreen> createState() => _PasswordStudioScreenState();
+}
+
+class _PasswordStudioScreenState extends State<PasswordStudioScreen> {
+  double _length = 16;
+  bool _upper = true;
+  bool _lower = true;
+  bool _digits = true;
+  bool _symbols = true;
+  String _generated = '';
+  List<Map<String, String>> _vault = [];
+  bool _revealVault = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _generate();
+    _loadVault();
+  }
+
+  Future<void> _loadVault() async {
+    final raw = await Store.getSecure('rafeeqy_pwd_vault_v13');
+    if (raw != null && raw.isNotEmpty) {
+      try {
+        final list = (jsonDecode(raw) as List).map((e) => Map<String, String>.from(e as Map)).toList();
+        if (mounted) setState(() => _vault = list);
+      } catch (_) {}
+    }
+  }
+
+  Future<void> _saveVault() async {
+    await Store.setSecure('rafeeqy_pwd_vault_v13', jsonEncode(_vault));
+  }
+
+  void _generate() {
+    const u = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const l = 'abcdefghijklmnopqrstuvwxyz';
+    const d = '0123456789';
+    const s = '!@#\$%^&*()-_=+[]{};:,.<>?';
+    String chars = '';
+    if (_upper) chars += u;
+    if (_lower) chars += l;
+    if (_digits) chars += d;
+    if (_symbols) chars += s;
+    if (chars.isEmpty) chars = l + d;
+    final rnd = math.Random.secure();
+    final out = List.generate(_length.round(), (_) => chars[rnd.nextInt(chars.length)]).join();
+    setState(() => _generated = out);
+  }
+
+  double get _strength {
+    double score = (_generated.length / 20).clamp(0.0, 0.5);
+    if (RegExp(r'[A-Z]').hasMatch(_generated)) score += 0.12;
+    if (RegExp(r'[a-z]').hasMatch(_generated)) score += 0.12;
+    if (RegExp(r'\d').hasMatch(_generated)) score += 0.13;
+    if (RegExp(r'[^A-Za-z0-9]').hasMatch(_generated)) score += 0.13;
+    return score.clamp(0.0, 1.0);
+  }
+
+  void _addToVaultDialog() {
+    final siteCtrl = TextEditingController();
+    final userCtrl = TextEditingController();
+    final passCtrl = TextEditingController(text: _generated);
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF161D30) : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          padding: const EdgeInsets.all(20),
+          child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const Text('حفظ في الخزنة المشفرة 🔐', style: TextStyle(fontFamily: 'Cairo', fontSize: 18, fontWeight: FontWeight.w800)),
+            const SizedBox(height: 14),
+            TextField(controller: siteCtrl, decoration: const InputDecoration(hintText: 'اسم الموقع أو التطبيق (مثلاً: فيسبوك)', prefixIcon: Icon(Icons.web_rounded))),
+            const SizedBox(height: 10),
+            TextField(controller: userCtrl, decoration: const InputDecoration(hintText: 'الإيميل أو اسم المستخدم', prefixIcon: Icon(Icons.person_rounded))),
+            const SizedBox(height: 10),
+            TextField(controller: passCtrl, decoration: const InputDecoration(hintText: 'كلمة المرور', prefixIcon: Icon(Icons.key_rounded))),
+            const SizedBox(height: 16),
+            PrimaryButton(
+              label: 'حفظ مشفر',
+              icon: Icons.lock_rounded,
+              onTap: () async {
+                if (siteCtrl.text.trim().isEmpty || passCtrl.text.trim().isEmpty) return;
+                setState(() {
+                  _vault.insert(0, {
+                    'site': siteCtrl.text.trim(),
+                    'user': userCtrl.text.trim(),
+                    'pass': passCtrl.text.trim(),
+                  });
+                });
+                await _saveVault();
+                if (mounted) Navigator.pop(context);
+              },
+            ),
+          ]),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final st = AppState.I;
+    final str = _strength;
+    final strColor = str >= 0.8 ? const Color(0xFF66BB6A) : str >= 0.5 ? const Color(0xFFFFB74D) : const Color(0xFFEF5350);
+    final strLabel = str >= 0.8 ? 'قوية جداً (تحتاج قرون للكسر 🛡️)' : str >= 0.5 ? 'متوسطة القوة ⚡' : 'ضعيفة ⚠️';
+
+    return GradientScaffold(
+      title: 'استوديو وخزنة الباسورد',
+      actions: [
+        IconButton(
+          icon: Icon(_revealVault ? Icons.visibility_off_rounded : Icons.visibility_rounded),
+          onPressed: () => setState(() => _revealVault = !_revealVault),
+        ),
+      ],
+      child: ListView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
+        children: [
+          GlassCard(
+            padding: const EdgeInsets.all(18),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              SelectableText(
+                _generated,
+                style: TextStyle(fontFamily: 'monospace', fontSize: 20, fontWeight: FontWeight.w800, color: st.accent),
+              ),
+              const SizedBox(height: 10),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: LinearProgressIndicator(value: str, minHeight: 8, valueColor: AlwaysStoppedAnimation(strColor)),
+              ),
+              const SizedBox(height: 6),
+              Text(strLabel, style: TextStyle(fontFamily: 'Cairo', fontSize: 11.5, fontWeight: FontWeight.w800, color: strColor)),
+              const SizedBox(height: 14),
+              Row(children: [
+                Expanded(
+                  child: GhostButton(
+                    label: 'توليد جديد',
+                    icon: Icons.refresh_rounded,
+                    onTap: () { haptic(); _generate(); },
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: PrimaryButton(
+                    label: 'نسخ',
+                    icon: Icons.copy_rounded,
+                    onTap: () {
+                      Clipboard.setData(ClipboardData(text: _generated));
+                      toast(context, 'اتنسخت كلمة المرور');
+                    },
+                  ),
+                ),
+              ]),
+            ]),
+          ),
+          const SizedBox(height: 12),
+          GlassCard(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('طول كلمة المرور: ${_length.round()} حرف', style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.w800)),
+              Slider(
+                value: _length, min: 8, max: 48, divisions: 40,
+                activeColor: st.accent,
+                onChanged: (v) { setState(() => _length = v); _generate(); },
+              ),
+              SwitchListTile(contentPadding: EdgeInsets.zero, value: _upper, title: const Text('أحرف كبيرة (A-Z)', style: TextStyle(fontFamily: 'Cairo', fontSize: 13)), onChanged: (v) { setState(() => _upper = v); _generate(); }),
+              SwitchListTile(contentPadding: EdgeInsets.zero, value: _lower, title: const Text('أحرف صغيرة (a-z)', style: TextStyle(fontFamily: 'Cairo', fontSize: 13)), onChanged: (v) { setState(() => _lower = v); _generate(); }),
+              SwitchListTile(contentPadding: EdgeInsets.zero, value: _digits, title: const Text('أرقام (0-9)', style: TextStyle(fontFamily: 'Cairo', fontSize: 13)), onChanged: (v) { setState(() => _digits = v); _generate(); }),
+              SwitchListTile(contentPadding: EdgeInsets.zero, value: _symbols, title: const Text('رموز خاصة (!@#\$%)', style: TextStyle(fontFamily: 'Cairo', fontSize: 13)), onChanged: (v) { setState(() => _symbols = v); _generate(); }),
+            ]),
+          ),
+          const SizedBox(height: 14),
+          Row(children: [
+            const Expanded(child: SectionTitle(title: 'الخزنة المشفرة (Secure Vault)', icon: Icons.security_rounded)),
+            GhostButton(label: '+ احفظ حساب', icon: Icons.add_rounded, onTap: _addToVaultDialog),
+          ]),
+          if (_vault.isEmpty)
+            const GlassCard(
+              padding: EdgeInsets.all(18),
+              child: Center(child: Text('الخزنة فارغة — احفظ كلمات مرورك المهمة بتشفير كامل على هاتفك',
+                textAlign: TextAlign.center, style: TextStyle(fontFamily: 'Cairo', fontSize: 12))),
+            )
+          else
+            ..._vault.asMap().entries.map((entry) {
+              final item = entry.value;
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: GlassCard(
+                  padding: const EdgeInsets.all(14),
+                  child: Row(children: [
+                    const Icon(Icons.vpn_key_rounded, color: Color(0xFF26A69A)),
+                    const SizedBox(width: 12),
+                    Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(item['site'] ?? '', style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.w800, fontSize: 14)),
+                      if ((item['user'] ?? '').isNotEmpty)
+                        Text(item['user']!, style: const TextStyle(fontFamily: 'Cairo', fontSize: 11.5, color: Colors.grey)),
+                      Text(_revealVault ? (item['pass'] ?? '') : '••••••••••••',
+                        style: TextStyle(fontFamily: 'monospace', fontSize: 13, fontWeight: FontWeight.w700, color: st.accent)),
+                    ])),
+                    IconButton(
+                      icon: const Icon(Icons.copy_rounded, size: 19),
+                      onPressed: () {
+                        Clipboard.setData(ClipboardData(text: item['pass'] ?? ''));
+                        toast(context, 'اتنسخت كلمة المرور');
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline_rounded, size: 19, color: Color(0xFFE57373)),
+                      onPressed: () async {
+                        setState(() => _vault.removeAt(entry.key));
+                        await _saveVault();
+                      },
+                    ),
+                  ]),
+                ),
+              );
+            }),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── 5. محول الوحدات والعملات الشامل (Unit & Currency Converter) ────────────
+
+class UnitConverterScreen extends StatefulWidget {
+  const UnitConverterScreen({super.key});
+  @override
+  State<UnitConverterScreen> createState() => _UnitConverterScreenState();
+}
+
+class _UnitConverterScreenState extends State<UnitConverterScreen> {
+  final TextEditingController _valCtrl = TextEditingController(text: '100');
+  String _cat = 'العملات';
+  String _from = 'USD دولار';
+  String _to = 'EGP جنيه مصري';
+
+  static const Map<String, Map<String, double>> _rates = {
+    'العملات': {
+      'USD دولار': 1.0,
+      'EGP جنيه مصري': 49.2,
+      'SAR ريال سعودي': 3.75,
+      'AED درهم إماراتي': 3.67,
+      'KWD دينار كويتي': 0.307,
+      'EUR يورو': 0.92,
+      'GBP إسترليني': 0.79,
+      'JOD دينار أردني': 0.709,
+    },
+    'الطول': {
+      'متر (m)': 1.0,
+      'كيلومتر (km)': 0.001,
+      'سنتيمتر (cm)': 100.0,
+      'ملليمتر (mm)': 1000.0,
+      'ميل (mile)': 0.000621371,
+      'قدم (ft)': 3.28084,
+      'بوصة (inch)': 39.3701,
+    },
+    'الوزن': {
+      'كيلوجرام (kg)': 1.0,
+      'جرام (g)': 1000.0,
+      'طن (ton)': 0.001,
+      'رطل (lb)': 2.20462,
+      'أوقية (oz)': 35.274,
+    },
+    'البيانات': {
+      'ميجابايت (MB)': 1.0,
+      'جيجابايت (GB)': 1 / 1024,
+      'تيرابايت (TB)': 1 / (1024 * 1024),
+      'كيلوبايت (KB)': 1024.0,
+    },
+  };
+
+  double _convert() {
+    final v = double.tryParse(_valCtrl.text.trim()) ?? 0;
+    if (_cat == 'الحرارة') {
+      double celsius = v;
+      if (_from == 'فهرنهايت °F') celsius = (v - 32) * 5 / 9;
+      if (_from == 'كلفن K') celsius = v - 273.15;
+      if (_to == 'مئوية °C') return celsius;
+      if (_to == 'فهرنهايت °F') return celsius * 9 / 5 + 32;
+      if (_to == 'كلفن K') return celsius + 273.15;
+      return celsius;
+    }
+    final map = _rates[_cat]!;
+    final rFrom = map[_from] ?? 1.0;
+    final rTo = map[_to] ?? 1.0;
+    return (v / rFrom) * rTo;
+  }
+
+  List<String> get _units {
+    if (_cat == 'الحرارة') return ['مئوية °C', 'فهرنهايت °F', 'كلفن K'];
+    return _rates[_cat]!.keys.toList();
+  }
+
+  @override
+  void dispose() {
+    _valCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final st = AppState.I;
+    final units = _units;
+    if (!units.contains(_from)) _from = units.first;
+    if (!units.contains(_to)) _to = units.length > 1 ? units[1] : units.first;
+    final res = _convert();
+
+    return GradientScaffold(
+      title: 'المحول الشامل (عملات ووحدات)',
+      child: ListView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
+        children: [
+          Wrap(
+            spacing: 8, runSpacing: 8,
+            children: ['العملات', 'الطول', 'الوزن', 'الحرارة', 'البيانات'].map((c) {
+              final sel = _cat == c;
+              return GestureDetector(
+                onTap: () {
+                  haptic();
+                  setState(() {
+                    _cat = c;
+                    final u = _units;
+                    _from = u.first;
+                    _to = u.length > 1 ? u[1] : u.first;
+                  });
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                  decoration: BoxDecoration(
+                    color: sel ? st.accent : st.accent.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Text(c, style: TextStyle(fontFamily: 'Cairo', fontSize: 12.5, fontWeight: FontWeight.w800,
+                    color: sel ? Colors.white : st.accent)),
+                ),
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 14),
+          GlassCard(
+            padding: const EdgeInsets.all(18),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              TextField(
+                controller: _valCtrl,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                onChanged: (_) => setState(() {}),
+                decoration: const InputDecoration(
+                  hintText: 'القيمة',
+                  prefixIcon: Icon(Icons.calculate_rounded),
+                ),
+              ),
+              const SizedBox(height: 14),
+              Row(children: [
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    value: _from,
+                    items: units.map((u) => DropdownMenuItem(value: u, child: Text(u, style: const TextStyle(fontFamily: 'Cairo', fontSize: 12.5)))).toList(),
+                    onChanged: (v) => setState(() => _from = v ?? _from),
+                    decoration: const InputDecoration(labelText: 'من'),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.swap_horiz_rounded, color: st.accent),
+                  onPressed: () => setState(() {
+                    final tmp = _from;
+                    _from = _to;
+                    _to = tmp;
+                  }),
+                ),
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    value: _to,
+                    items: units.map((u) => DropdownMenuItem(value: u, child: Text(u, style: const TextStyle(fontFamily: 'Cairo', fontSize: 12.5)))).toList(),
+                    onChanged: (v) => setState(() => _to = v ?? _to),
+                    decoration: const InputDecoration(labelText: 'إلى'),
+                  ),
+                ),
+              ]),
+            ]),
+          ),
+          const SizedBox(height: 16),
+          GlassCard(
+            gradient: LinearGradient(colors: [st.accent, Color.lerp(st.accent, const Color(0xFF26A69A), 0.55)!]),
+            padding: const EdgeInsets.all(22),
+            child: Column(children: [
+              const Text('النتيجة', style: TextStyle(fontFamily: 'Cairo', color: Colors.white70, fontSize: 13)),
+              const SizedBox(height: 6),
+              SelectableText(
+                '${res.toStringAsFixed(res == res.roundToDouble() ? 0 : 3)} $_to',
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontFamily: 'Cairo', color: Colors.white, fontSize: 28, fontWeight: FontWeight.w800),
+              ),
+            ]),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── 6. ساعة الإيقاف والمؤقت الذكي (Stopwatch & Timer Screen) ───────────────
+
+class StopwatchTimerScreen extends StatefulWidget {
+  const StopwatchTimerScreen({super.key});
+  @override
+  State<StopwatchTimerScreen> createState() => _StopwatchTimerScreenState();
+}
+
+class _StopwatchTimerScreenState extends State<StopwatchTimerScreen> {
+  bool _isTimerTab = false;
+  final Stopwatch _sw = Stopwatch();
+  Timer? _tick;
+  final List<int> _laps = [];
+
+  int _countdownTotalSec = 600;
+  int _countdownLeftSec = 600;
+  bool _countdownRunning = false;
+
+  @override
+  void dispose() {
+    _tick?.cancel();
+    super.dispose();
+  }
+
+  void _toggleStopwatch() {
+    haptic();
+    if (_sw.isRunning) {
+      _sw.stop();
+      _tick?.cancel();
+    } else {
+      _sw.start();
+      _tick = Timer.periodic(const Duration(milliseconds: 50), (_) {
+        if (mounted) setState(() {});
+      });
+    }
+    setState(() {});
+  }
+
+  void _resetStopwatch() {
+    haptic();
+    _sw.stop();
+    _sw.reset();
+    _laps.clear();
+    _tick?.cancel();
+    setState(() {});
+  }
+
+  void _toggleCountdown() {
+    haptic();
+    if (_countdownRunning) {
+      _countdownRunning = false;
+      _tick?.cancel();
+    } else {
+      if (_countdownLeftSec <= 0) _countdownLeftSec = _countdownTotalSec;
+      _countdownRunning = true;
+      _tick?.cancel();
+      _tick = Timer.periodic(const Duration(seconds: 1), (t) {
+        if (!mounted) return;
+        if (_countdownLeftSec > 0) {
+          setState(() => _countdownLeftSec--);
+        } else {
+          t.cancel();
+          setState(() => _countdownRunning = false);
+          Notif.show(99401, '⏰ انتهى المؤقت!', 'انتهى وقت العد التنازلي بنجاح (+15 XP)');
+          AppState.I.addXp(15);
+        }
+      });
+    }
+    setState(() {});
+  }
+
+  String _fmtMs(int ms) {
+    final m = (ms ~/ 60000).toString().padLeft(2, '0');
+    final s = ((ms % 60000) ~/ 1000).toString().padLeft(2, '0');
+    final cs = ((ms % 1000) ~/ 10).toString().padLeft(2, '0');
+    return '$m:$s.$cs';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final st = AppState.I;
+    return GradientScaffold(
+      title: 'ساعة الإيقاف والمؤقت',
+      child: ListView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
+        children: [
+          Row(children: [
+            Expanded(
+              child: PrimaryButton(
+                label: 'ساعة إيقاف',
+                icon: Icons.timer_outlined,
+                color: !_isTimerTab ? st.accent : Colors.grey,
+                onTap: () => setState(() => _isTimerTab = false),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: PrimaryButton(
+                label: 'مؤقت ذكي',
+                icon: Icons.hourglass_bottom_rounded,
+                color: _isTimerTab ? st.accent : Colors.grey,
+                onTap: () => setState(() => _isTimerTab = true),
+              ),
+            ),
+          ]),
+          const SizedBox(height: 16),
+          if (!_isTimerTab) ...[
+            GlassCard(
+              padding: const EdgeInsets.all(28),
+              child: Column(children: [
+                Text(
+                  _fmtMs(_sw.elapsedMilliseconds),
+                  style: TextStyle(fontFamily: 'monospace', fontSize: 48, fontWeight: FontWeight.w800, color: st.accent),
+                ),
+                const SizedBox(height: 18),
+                Row(children: [
+                  Expanded(
+                    child: GhostButton(
+                      label: 'تصفير',
+                      icon: Icons.refresh_rounded,
+                      onTap: _resetStopwatch,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: GhostButton(
+                      label: 'لفة (Lap)',
+                      icon: Icons.flag_rounded,
+                      onTap: _sw.isRunning ? () => setState(() => _laps.insert(0, _sw.elapsedMilliseconds)) : null,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: PrimaryButton(
+                      label: _sw.isRunning ? 'إيقاف' : 'ابدأ',
+                      icon: _sw.isRunning ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                      onTap: _toggleStopwatch,
+                    ),
+                  ),
+                ]),
+              ]),
+            ),
+            if (_laps.isNotEmpty) ...[
+              const SectionTitle(title: 'اللفات المسجلة', icon: Icons.flag_rounded),
+              ..._laps.asMap().entries.map((e) => Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: GlassCard(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  child: Row(children: [
+                    Text('لفة ${_laps.length - e.key}', style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.w800)),
+                    const Spacer(),
+                    Text(_fmtMs(e.value), style: const TextStyle(fontFamily: 'monospace', fontWeight: FontWeight.w800)),
+                  ]),
+                ),
+              )),
+            ],
+          ] else ...[
+            GlassCard(
+              padding: const EdgeInsets.all(24),
+              child: Column(children: [
+                Text(
+                  '${(_countdownLeftSec ~/ 60).toString().padLeft(2, '0')}:${(_countdownLeftSec % 60).toString().padLeft(2, '0')}',
+                  style: TextStyle(fontFamily: 'monospace', fontSize: 52, fontWeight: FontWeight.w800, color: st.accent),
+                ),
+                const SizedBox(height: 16),
+                Wrap(
+                  spacing: 8, runSpacing: 8,
+                  children: [5, 10, 15, 25, 30, 45, 60].map((m) => GestureDetector(
+                    onTap: () => setState(() {
+                      _countdownTotalSec = m * 60;
+                      _countdownLeftSec = m * 60;
+                    }),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                      decoration: BoxDecoration(
+                        color: st.accent.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text('$m د', style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.w800, color: st.accent)),
+                    ),
+                  )).toList(),
+                ),
+                const SizedBox(height: 18),
+                Row(children: [
+                  Expanded(
+                    child: GhostButton(
+                      label: 'إعادة ضبط',
+                      icon: Icons.refresh_rounded,
+                      onTap: () => setState(() {
+                        _countdownRunning = false;
+                        _tick?.cancel();
+                        _countdownLeftSec = _countdownTotalSec;
+                      }),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: PrimaryButton(
+                      label: _countdownRunning ? 'إيقاف مؤقت' : 'ابدأ العد',
+                      icon: _countdownRunning ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                      onTap: _toggleCountdown,
+                    ),
+                  ),
+                ]),
+              ]),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+// ─── 7. حاسبة المعدل التراكمي للطلاب (GPA Calculator Screen) ───────────────
+
+class GpaCalculatorScreen extends StatefulWidget {
+  const GpaCalculatorScreen({super.key});
+  @override
+  State<GpaCalculatorScreen> createState() => _GpaCalculatorScreenState();
+}
+
+class _GpaCalculatorScreenState extends State<GpaCalculatorScreen> {
+  bool _scale5 = false;
+  final List<Map<String, dynamic>> _courses = [
+    {'name': 'المادة 1', 'hours': 3, 'grade': 'A'},
+    {'name': 'المادة 2', 'hours': 3, 'grade': 'B+'},
+    {'name': 'المادة 3', 'hours': 2, 'grade': 'A+'},
+  ];
+
+  static const Map<String, double> _pts4 = {
+    'A+': 4.0, 'A': 4.0, 'A-': 3.7,
+    'B+': 3.3, 'B': 3.0, 'B-': 2.7,
+    'C+': 2.3, 'C': 2.0, 'D+': 1.3, 'D': 1.0, 'F': 0.0,
+  };
+
+  static const Map<String, double> _pts5 = {
+    'A+': 5.0, 'A': 4.75, 'A-': 4.5,
+    'B+': 4.0, 'B': 3.5, 'B-': 3.0,
+    'C+': 2.5, 'C': 2.0, 'D+': 1.5, 'D': 1.0, 'F': 0.0,
+  };
+
+  double get _gpa {
+    final map = _scale5 ? _pts5 : _pts4;
+    double totalPts = 0;
+    int totalHours = 0;
+    for (final c in _courses) {
+      final h = (c['hours'] as int?) ?? 3;
+      final g = map[c['grade']] ?? 0.0;
+      totalPts += h * g;
+      totalHours += h;
+    }
+    return totalHours == 0 ? 0 : totalPts / totalHours;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final st = AppState.I;
+    final gpa = _gpa;
+    return GradientScaffold(
+      title: 'حاسبة المعدل التراكمي GPA',
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.add_rounded),
+          onPressed: () => setState(() => _courses.add({'name': 'مادة ${_courses.length + 1}', 'hours': 3, 'grade': 'A'})),
+        ),
+      ],
+      child: ListView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
+        children: [
+          GlassCard(
+            gradient: LinearGradient(colors: [st.accent, Color.lerp(st.accent, const Color(0xFF5C6BC0), 0.6)!]),
+            padding: const EdgeInsets.all(22),
+            child: Column(children: [
+              const Text('معدلك الفصلي', style: TextStyle(fontFamily: 'Cairo', color: Colors.white70, fontSize: 13)),
+              Text(gpa.toStringAsFixed(2), style: const TextStyle(fontFamily: 'Cairo', color: Colors.white, fontSize: 42, fontWeight: FontWeight.w800)),
+              Text('من ${_scale5 ? "5.00" : "4.00"}', style: const TextStyle(fontFamily: 'Cairo', color: Colors.white70, fontSize: 12)),
+            ]),
+          ),
+          const SizedBox(height: 12),
+          SwitchListTile(
+            value: _scale5,
+            onChanged: (v) => setState(() => _scale5 = v),
+            title: const Text('نظام 5.0 (بدلاً من 4.0)', style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.w800)),
+          ),
+          ..._courses.asMap().entries.map((entry) {
+            final i = entry.key;
+            final c = entry.value;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: GlassCard(
+                padding: const EdgeInsets.all(12),
+                child: Row(children: [
+                  Expanded(
+                    flex: 3,
+                    child: TextFormField(
+                      initialValue: c['name'] as String,
+                      onChanged: (v) => c['name'] = v,
+                      decoration: const InputDecoration(hintText: 'اسم المادة', isDense: true),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  DropdownButton<int>(
+                    value: c['hours'] as int,
+                    items: [1, 2, 3, 4, 5, 6].map((h) => DropdownMenuItem(value: h, child: Text('$h س'))).toList(),
+                    onChanged: (v) => setState(() => c['hours'] = v ?? 3),
+                  ),
+                  const SizedBox(width: 8),
+                  DropdownButton<String>(
+                    value: c['grade'] as String,
+                    items: _pts4.keys.map((g) => DropdownMenuItem(value: g, child: Text(g))).toList(),
+                    onChanged: (v) => setState(() => c['grade'] = v ?? 'A'),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close_rounded, size: 18),
+                    onPressed: () => setState(() => _courses.removeAt(i)),
+                  ),
+                ]),
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── 8. حاسبة العمر والميلاد (Age Calculator Screen) ─────────────────────────
+
+class AgeCalculatorScreen extends StatefulWidget {
+  const AgeCalculatorScreen({super.key});
+  @override
+  State<AgeCalculatorScreen> createState() => _AgeCalculatorScreenState();
+}
+
+class _AgeCalculatorScreenState extends State<AgeCalculatorScreen> {
+  DateTime _birth = DateTime(2002, 5, 15);
+
+  @override
+  Widget build(BuildContext context) {
+    final now = DateTime.now();
+    int years = now.year - _birth.year;
+    int months = now.month - _birth.month;
+    int days = now.day - _birth.day;
+    if (days < 0) {
+      months--;
+      days += DateTime(now.year, now.month, 0).day;
+    }
+    if (months < 0) {
+      years--;
+      months += 12;
+    }
+    DateTime nextBday = DateTime(now.year, _birth.month, _birth.day);
+    if (!nextBday.isAfter(now)) {
+      nextBday = DateTime(now.year + 1, _birth.month, _birth.day);
+    }
+    final daysToBday = nextBday.difference(now).inDays;
+    final totalDays = now.difference(_birth).inDays;
+
+    return GradientScaffold(
+      title: 'حاسبة العمر والميلاد',
+      child: ListView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
+        children: [
+          GlassCard(
+            onTap: () async {
+              final picked = await showDatePicker(
+                context: context,
+                initialDate: _birth,
+                firstDate: DateTime(1920),
+                lastDate: now,
+              );
+              if (picked != null) setState(() => _birth = picked);
+            },
+            child: Row(children: [
+              const Icon(Icons.cake_rounded, color: Color(0xFFFF7043), size: 28),
+              const SizedBox(width: 12),
+              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const Text('تاريخ ميلادك (اضغط للتغيير)', style: TextStyle(fontFamily: 'Cairo', fontSize: 12)),
+                Text(fmtShortDate(_birth), style: const TextStyle(fontFamily: 'Cairo', fontSize: 18, fontWeight: FontWeight.w800)),
+              ])),
+              const Icon(Icons.edit_calendar_rounded),
+            ]),
+          ),
+          const SizedBox(height: 14),
+          GlassCard(
+            gradient: const LinearGradient(colors: [Color(0xFFFF7043), Color(0xFFEC407A)]),
+            padding: const EdgeInsets.all(22),
+            child: Column(children: [
+              const Text('عمرك الآن', style: TextStyle(fontFamily: 'Cairo', color: Colors.white70, fontSize: 13)),
+              const SizedBox(height: 6),
+              Text('$years سنة و $months شهر و $days يوم',
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontFamily: 'Cairo', color: Colors.white, fontSize: 24, fontWeight: FontWeight.w800)),
+              const SizedBox(height: 10),
+              Text('🎂 متبقي $daysToBday يوم على عيد ميلادك القادم!',
+                style: const TextStyle(fontFamily: 'Cairo', color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
+            ]),
+          ),
+          const SizedBox(height: 14),
+          GlassCard(
+            child: Column(children: [
+              _statRow('إجمالي الأيام التي عشتها', '$totalDays يوم'),
+              const Divider(height: 20),
+              _statRow('إجمالي الأسابيع', '${totalDays ~/ 7} أسبوع'),
+              const Divider(height: 20),
+              _statRow('إجمالي الساعات', '${totalDays * 24} ساعة'),
+              const Divider(height: 20),
+              _statRow('يوم الميلاد', kWeekDaysAr[_birth.weekday - 1]),
+            ]),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _statRow(String k, String v) => Row(children: [
+    Text(k, style: const TextStyle(fontFamily: 'Cairo', fontSize: 13)),
+    const Spacer(),
+    Text(v, style: const TextStyle(fontFamily: 'Cairo', fontSize: 14, fontWeight: FontWeight.w800)),
+  ]);
+}
+
+// ─── 9. استوديو أصوات التركيز والاسترخاء (Focus Sounds Studio) ───────────────
+
+class FocusSoundsScreen extends StatefulWidget {
+  const FocusSoundsScreen({super.key});
+  @override
+  State<FocusSoundsScreen> createState() => _FocusSoundsScreenState();
+}
+
+class _FocusSoundsScreenState extends State<FocusSoundsScreen> {
+  String _activeScene = 'مطر هادئ 🌧️';
+  bool _playing = false;
+  int _elapsedSec = 0;
+  Timer? _timer;
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _toggle() {
+    haptic();
+    if (_playing) {
+      _timer?.cancel();
+      setState(() => _playing = false);
+    } else {
+      setState(() => _playing = true);
+      _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+        if (!mounted) return;
+        setState(() => _elapsedSec++);
+        if (_elapsedSec > 0 && _elapsedSec % 300 == 0) {
+          AppState.I.addXp(10);
+        }
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final scenes = [
+      ('مطر هادئ 🌧️', 'صوت قطرات المطر للتركيز العميق', const Color(0xFF42A5F5), Icons.water_drop_rounded),
+      ('أمواج البحر 🌊', 'هدوء الشاطئ لتصفية الذهن', const Color(0xFF26C6DA), Icons.waves_rounded),
+      ('نسيم الغابة 🌲', 'أجواء الطبيعة الخضراء والطيور', const Color(0xFF66BB6A), Icons.park_rounded),
+      ('مقهى هادئ ☕', 'ضوضاء بيضاء خفيفة للإنتاجية', const Color(0xFF8D6E63), Icons.coffee_rounded),
+      ('موجات ألفا 🧠', 'تركيز عميق للمذاكرة والبرمجة', const Color(0xFFAB47BC), Icons.psychology_rounded),
+    ];
+    return GradientScaffold(
+      title: 'أجواء التركيز والاسترخاء',
+      child: ListView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
+        children: [
+          GlassCard(
+            gradient: const LinearGradient(colors: [Color(0xFF311B92), Color(0xFF512DA8)]),
+            padding: const EdgeInsets.all(24),
+            child: Column(children: [
+              Icon(_playing ? Icons.graphic_eq_rounded : Icons.headphones_rounded, color: Colors.white, size: 54),
+              const SizedBox(height: 12),
+              Text(_activeScene, style: const TextStyle(fontFamily: 'Cairo', color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800)),
+              const SizedBox(height: 6),
+              Text(
+                'مدة الجلسة: ${(_elapsedSec ~/ 60).toString().padLeft(2, '0')}:${(_elapsedSec % 60).toString().padLeft(2, '0')} (+10 XP كل 5 دقائق)',
+                style: const TextStyle(fontFamily: 'Cairo', color: Colors.white70, fontSize: 12),
+              ),
+              const SizedBox(height: 16),
+              PrimaryButton(
+                label: _playing ? 'إيقاف الجلسة' : 'ابدأ جلسة التركيز',
+                icon: _playing ? Icons.stop_rounded : Icons.play_arrow_rounded,
+                color: Colors.white,
+                onTap: _toggle,
+              ),
+            ]),
+          ),
+          const SectionTitle(title: 'اختر بيئة التركيز', icon: Icons.spa_rounded),
+          ...scenes.map((s) {
+            final sel = _activeScene == s.$1;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: GlassCard(
+                onTap: () => setState(() => _activeScene = s.$1),
+                padding: const EdgeInsets.all(14),
+                child: Row(children: [
+                  Container(
+                    width: 44, height: 44,
+                    decoration: BoxDecoration(color: s.$3.withValues(alpha: 0.18), borderRadius: BorderRadius.circular(13)),
+                    child: Icon(s.$4, color: s.$3),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(s.$1, style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.w800, fontSize: 14)),
+                    Text(s.$2, style: const TextStyle(fontFamily: 'Cairo', fontSize: 11, color: Colors.grey)),
+                  ])),
+                  if (sel) Icon(Icons.check_circle_rounded, color: s.$3),
+                ]),
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── 10. حاسبة الصحة الشاملة (BMI & TDEE & Water Calculator) ────────────────
+
+class BmiHealthCalculatorScreen extends StatefulWidget {
+  const BmiHealthCalculatorScreen({super.key});
+  @override
+  State<BmiHealthCalculatorScreen> createState() => _BmiHealthCalculatorScreenState();
+}
+
+class _BmiHealthCalculatorScreenState extends State<BmiHealthCalculatorScreen> {
+  double _heightCm = 172;
+  double _weightKg = 72;
+  int _age = 24;
+
+  double get _bmi => _weightKg / math.pow(_heightCm / 100, 2);
+
+  String get _bmiCategory {
+    final b = _bmi;
+    if (b < 18.5) return 'نحافة — تحتاج زيادة صحية 🌱';
+    if (b < 25) return 'وزن مثالي وصحي جداً ✅';
+    if (b < 30) return 'زيادة طفيفة في الوزن ⚡';
+    return 'سمنة — ننصح بخطة نشاط وتغذية متوازنة 💪';
+  }
+
+  int get _dailyCalories {
+    final isMale = AppState.I.userGender == Gender.male;
+    final bmr = 10 * _weightKg + 6.25 * _heightCm - 5 * _age + (isMale ? 5 : -161);
+    return (bmr * 1.45).round();
+  }
+
+  double get _waterLiters => (_weightKg * 0.035);
+
+  @override
+  Widget build(BuildContext context) {
+    final st = AppState.I;
+    return GradientScaffold(
+      title: 'حاسبة الصحة والسعرات BMI',
+      child: ListView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
+        children: [
+          GlassCard(
+            gradient: const LinearGradient(colors: [Color(0xFF43A047), Color(0xFF26A69A)]),
+            padding: const EdgeInsets.all(22),
+            child: Column(children: [
+              const Text('مؤشر كتلة الجسم (BMI)', style: TextStyle(fontFamily: 'Cairo', color: Colors.white70, fontSize: 13)),
+              Text(_bmi.toStringAsFixed(1), style: const TextStyle(fontFamily: 'Cairo', color: Colors.white, fontSize: 42, fontWeight: FontWeight.w800)),
+              Text(_bmiCategory, textAlign: TextAlign.center,
+                style: const TextStyle(fontFamily: 'Cairo', color: Colors.white, fontSize: 13.5, fontWeight: FontWeight.w700)),
+            ]),
+          ),
+          const SizedBox(height: 14),
+          GlassCard(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('الطول: ${_heightCm.round()} سم', style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.w800)),
+              Slider(value: _heightCm, min: 120, max: 220, divisions: 100, activeColor: st.accent, onChanged: (v) => setState(() => _heightCm = v)),
+              Text('الوزن: ${_weightKg.round()} كجم', style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.w800)),
+              Slider(value: _weightKg, min: 35, max: 160, divisions: 125, activeColor: st.accent, onChanged: (v) => setState(() => _weightKg = v)),
+              Text('العمر: $_age سنة', style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.w800)),
+              Slider(value: _age.toDouble(), min: 12, max: 90, divisions: 78, activeColor: st.accent, onChanged: (v) => setState(() => _age = v.round())),
+            ]),
+          ),
+          const SizedBox(height: 14),
+          GlassCard(
+            child: Column(children: [
+              Row(children: [
+                const Icon(Icons.local_fire_department_rounded, color: Color(0xFFFF7043)),
+                const SizedBox(width: 10),
+                const Expanded(child: Text('احتياجك اليومي من السعرات', style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.w800))),
+                Text('$_dailyCalories سعرة/يوم', style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.w800, color: st.accent)),
+              ]),
+              const Divider(height: 22),
+              Row(children: [
+                const Icon(Icons.water_drop_rounded, color: Color(0xFF42A5F5)),
+                const SizedBox(width: 10),
+                const Expanded(child: Text('احتياجك اليومي من المياه', style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.w800))),
+                Text('${_waterLiters.toStringAsFixed(1)} لتر (${(_waterLiters * 4).round()} أكواب)',
+                  style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.w800, color: Color(0xFF42A5F5))),
+              ]),
+            ]),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 Future<void> openWhatsApp() async {
   final uri = Uri.parse('https://wa.me/$kDevWhatsApp?text=${Uri.encodeComponent("سلام يا معلم، عندي سؤال بخصوص $kAppName")}');
   try {
@@ -17315,6 +19138,15 @@ Future<void> openWhatsApp() async {
   } catch (_) {
     try { await launchUrl(Uri.parse('tel:$kDevPhone')); } catch (_) {}
   }
+}
+
+@pragma('vm:entry-point')
+Future<void> rafeeqyWidgetBackgroundCallback(Uri? uri) async {
+  if (uri == null) return;
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Store.init();
+  } catch (_) {}
 }
 
 Future<void> main() async {
@@ -17369,6 +19201,7 @@ class _RafeeqyAppState extends State<RafeeqyApp> with WidgetsBindingObserver {
         break;
       case AppLifecycleState.resumed:
         AppLockService.I.onAppResumed();
+        AppState.I.checkNativeWidgetAction();
         AppState.I.notifyListeners();
         break;
       case AppLifecycleState.detached:
@@ -17406,9 +19239,11 @@ class _RafeeqyAppState extends State<RafeeqyApp> with WidgetsBindingObserver {
           builder: (context, child) => Directionality(textDirection: TextDirection.rtl, child: child ?? const SizedBox()),
           home: !AppState.I.onboardingDone
               ? const OnboardingScreen()
-              : showLock
-                  ? const LockScreen()
-                  : const RootShell(),
+              : AlarmService.isRinging && AlarmService.ringing != null
+                  ? AlarmRingScreen(alarm: AlarmService.ringing!)
+                  : showLock
+                      ? const LockScreen()
+                      : const RootShell(),
         );
       },
     );
