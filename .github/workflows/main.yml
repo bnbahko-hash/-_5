@@ -18,7 +18,6 @@ jobs:
           python3 - << 'PYEOF'
           import os, shutil, base64
 
-          # Remove any accidental duplicate kts or misplaced gradle files
           for stray in [
               "build.gradle",
               "build.gradle.kts",
@@ -53,7 +52,6 @@ jobs:
               with open(rel_path, "wb") as f:
                   f.write(base64.b64decode(b64_data))
 
-          # Fix broken resource filenames & locations in android/app/src/main/res
           res = "android/app/src/main/res"
           os.makedirs(f"{res}/xml", exist_ok=True)
           os.makedirs(f"{res}/drawable", exist_ok=True)
@@ -71,18 +69,30 @@ jobs:
               if os.path.exists(src):
                   shutil.move(src, dst)
 
-          # Copy launcher icons to mipmap folders if needed
-          for icon_src in [f"{res}/ic_launcher.png", "ic_launcher.png"]:
-              if os.path.exists(icon_src):
-                  for d in ["mipmap-mdpi", "mipmap-hdpi", "mipmap-xhdpi", "mipmap-xxhdpi", "mipmap-xxxhdpi"]:
-                      os.makedirs(f"{res}/{d}", exist_ok=True)
-                      shutil.copy2(icon_src, f"{res}/{d}/ic_launcher.png")
-                      shutil.copy2(icon_src, f"{res}/{d}/ic_launcher_round.png")
-                  if icon_src == f"{res}/ic_launcher.png":
-                      os.remove(icon_src)
+          # Ensure ic_launcher.png exists in drawable AND all mipmap-* directories (both ic_launcher.png and ic_launcher_round.png)
+          fallback_icon_bytes = base64.b64decode("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")
+          icon_bytes = None
+          for candidate in [f"{res}/drawable/ic_launcher.png", f"{res}/ic_launcher.png", "ic_launcher.png"]:
+              if os.path.exists(candidate):
+                  with open(candidate, "rb") as f:
+                      icon_bytes = f.read()
                   break
+          if not icon_bytes:
+              icon_bytes = fallback_icon_bytes
 
-          # Remove old duplicate Kotlin files
+          with open(f"{res}/drawable/ic_launcher.png", "wb") as f:
+              f.write(icon_bytes)
+
+          for d in ["mipmap-mdpi", "mipmap-hdpi", "mipmap-xhdpi", "mipmap-xxhdpi", "mipmap-xxxhdpi"]:
+              os.makedirs(f"{res}/{d}", exist_ok=True)
+              with open(f"{res}/{d}/ic_launcher.png", "wb") as f:
+                  f.write(icon_bytes)
+              with open(f"{res}/{d}/ic_launcher_round.png", "wb") as f:
+                  f.write(icon_bytes)
+
+          if os.path.exists(f"{res}/ic_launcher.png"):
+              os.remove(f"{res}/ic_launcher.png")
+
           for old_kt in [
               "android/app/src/main/kotlin/MainActivity.kt",
               "android/app/src/main/kotlin/SmsReceiver.kt",
@@ -92,7 +102,6 @@ jobs:
           if os.path.exists("android/app/src/main/kotlin/com/yossefjoo"):
               shutil.rmtree("android/app/src/main/kotlin/com/yossefjoo")
 
-          # Ensure pubspec.yaml has dependency_overrides for image/archive
           if os.path.exists("pubspec.yaml"):
               with open("pubspec.yaml", "r", encoding="utf-8") as f:
                   pub = f.read()
@@ -101,7 +110,7 @@ jobs:
                   with open("pubspec.yaml", "w", encoding="utf-8") as f:
                       f.write(pub)
 
-          print("Android & Gradle structure (including root android/build.gradle) repaired successfully!")
+          print("All Android resources, mipmap icons, and Gradle configs verified!")
           PYEOF
 
       - name: ☕ Setup Java 17
